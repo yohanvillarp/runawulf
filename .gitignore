@@ -1,0 +1,32 @@
+# Node.js
+node_modules/
+npm-debug.log*
+.env
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# Vite / React
+dist/
+build/
+.vite/
+coverage/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE/editor configs
+.vscode/
+.idea/
+
+# Output folders
+/frontend/dist/
+/backend/dist/
+
+# OS files
+*.swp
