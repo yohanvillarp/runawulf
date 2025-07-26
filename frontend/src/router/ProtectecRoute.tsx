@@ -1,13 +1,8 @@
-import { Navigate } from 'react-router-dom'
-import type { ReactNode } from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
 
-type Props = {
-  children: ReactNode
-};
-
-const ProtectedRoute =({ children }: Props) => {  
+const ProtectedRoute =() => {  
     const isConfigured = localStorage.getItem('configured') === 'true'
-    return isConfigured ? children : <Navigate to="/initial-setup" />
+    return isConfigured ? <Outlet /> : <Navigate to="/initial-setup" />
 }
 
 export default ProtectedRoute

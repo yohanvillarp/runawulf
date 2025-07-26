@@ -11,8 +11,7 @@ function AppRoutes() {
       <Route path="/initial-setup" element={<InitialSetup />} />
 
       <Route
-        element={<ProtectedRoute><InitialSetup /></ProtectedRoute>}
-      >
+        element={<ProtectedRoute />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
       </Route>
