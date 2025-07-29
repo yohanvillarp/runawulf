@@ -4,6 +4,7 @@ import About from '../pages/About'
 import InitialSetup from '../pages/InitialSetup'
 import ProtectedRoute from './ProtectecRoute'
 import NotFound from '../pages/NotFound'
+import Setup from '../pages/Setup'
 
 function AppRoutes() {
   return (
@@ -14,6 +15,7 @@ function AppRoutes() {
         element={<ProtectedRoute />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/setup" element={<Setup />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
