@@ -1,20 +1,18 @@
 import { Github } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function InitialSetup() {
 
-  const navigate = useNavigate();
-
-
   const [form, setForm] = useState({
-    ip: '',
-    user: '',
-    password: '',
+    ip: '',user: '',password: '',
   });
-
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  const socketRef = useRef<WebSocket | null>(null);
 
   // Verificar si ya esta configurado
   useEffect(() => {
@@ -49,6 +47,30 @@ export default function InitialSetup() {
       if (data.success) {
         localStorage.setItem('configured', 'true')
         setResult('✅ El usuario tiene permisos sudo');
+
+        // Conectar al servidor WebSocket
+        const socket = new WebSocket(`ws://${form.ip}:4000`);
+        socketRef.current = socket;
+
+        socket.onopen = () => {
+          console.log('Conectado al servidor WebSocket');
+          socket.send('echo "Runawulf conectado correctamente"'); //test
+        };
+
+        socket.onmessage = (event) => {
+          console.log('Mensaje recibido del servidor WebSocket:', event.data);
+        };
+
+        socket.onerror = (error) => {
+          console.error('Error al conectar al servidor WebSocket:', error);
+        };
+
+        socket.onclose = () => {
+          console.log('Conexión cerrada al servidor WebSocket');
+        };
+
+      };
+
         setTimeout(() => {
           navigate('/'); // Redirigir tras éxito
         }, 1000);
