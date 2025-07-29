@@ -6,20 +6,27 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const [socket, setSocket] = useState<WebSocket | null>(null)
 
   const connect = (ip: string) => {
-    if (socketRef.current) return
-    const ws = new WebSocket(`ws://${ip}:4000`)
-    socketRef.current = ws
-    setSocket(ws)
-
-    ws.onopen = () => console.log('🟢 Conectado al WebSocket')
-    ws.onmessage = (e) => console.log('📩', e.data)
-    ws.onclose = () => {
-      console.log('🔌 WebSocket cerrado')
-      socketRef.current = null
-      setSocket(null)
-    }
-    ws.onerror = (e) => console.error('❌ WebSocket error:', e)
+  if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
+    console.error('❌ IP no válida o vacía:', ip)
+    return
   }
+
+  if (socketRef.current) return
+
+  const ws = new WebSocket(`ws://${ip}:4000`)
+  socketRef.current = ws
+  setSocket(ws)
+
+  ws.onopen = () => console.log('🟢 Conectado al WebSocket')
+  ws.onmessage = (e) => console.log('📩', e.data)
+  ws.onclose = () => {
+    console.log('🔌 WebSocket cerrado')
+    socketRef.current = null
+    setSocket(null)
+  }
+  ws.onerror = (e) => console.error('❌ WebSocket error:', e)
+}
+
 
   useEffect(() => {
     return () => {
