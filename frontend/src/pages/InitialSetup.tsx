@@ -1,14 +1,16 @@
 import { Github } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useWebSocket } from '../context/useWebSocket'
+
 
 export default function InitialSetup() {
   const [form, setForm] = useState({ ip: '', user: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const navigate = useNavigate();
-  const socketRef = useRef<WebSocket | null>(null);
 
+  const { connect } = useWebSocket();
   useRedirectIfConfigured(navigate);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,8 +31,10 @@ export default function InitialSetup() {
       //guarda ip y usuario
       localStorage.setItem('ipServer', form.ip);
       localStorage.setItem('userServer', form.user);
+
       
-      connectWebSocket(form.ip, socketRef);
+      connect(form.ip)
+
       setTimeout(() => navigate('/'), 1000);
     } else {
       setResult(`❌ Error: ${error || 'Credenciales inválidas'}`);
@@ -74,27 +78,6 @@ async function verifyAdminCredentials(form: { ip: string; user: string; password
   }
 }
 
-function connectWebSocket(ip: string, socketRef: React.MutableRefObject<WebSocket | null>) {
-  const socket = new WebSocket(`ws://${ip}:4000`);
-  socketRef.current = socket;
-
-  socket.onopen = () => {
-    console.log('Conectado al servidor WebSocket');
-    socket.send('echo "Runawulf conectado correctamente"');
-  };
-
-  socket.onmessage = (event) => {
-    console.log('Mensaje recibido del servidor WebSocket:', event.data);
-  };
-
-  socket.onerror = (error) => {
-    console.error('Error al conectar al servidor WebSocket:', error);
-  };
-
-  socket.onclose = () => {
-    console.log('Conexión cerrada al servidor WebSocket');
-  };
-}
 
 
 function FormHeader() {
