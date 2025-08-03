@@ -55,7 +55,7 @@ export const startServer = () => {
                     break
 
                 case 'exec-script':
-                    handleExecScript(ws, payload?.script)
+                    handleExecScript(ws, payload?.script+".sh")
                     break
 
                 default:
@@ -133,8 +133,8 @@ export function handleExecScript(ws: WebSocket, script?: string) {
     return
   }
 
-  // ✅ Ruta segura al script
-  const scriptPath = path.join(__dirname, '../../scripts', script+".sh")
+  // Ruta segura al script
+  const scriptPath = path.join(__dirname, '../scripts', script)
 
   exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
     if (error) {
