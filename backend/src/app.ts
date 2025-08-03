@@ -5,6 +5,7 @@ import routes from './routes'
 import { exec } from 'child_process'
 import { WebSocketServer, WebSocket } from 'ws'
 import http from 'http'
+import path from 'path'
 
 dotenv.config()
 
@@ -51,6 +52,10 @@ export const startServer = () => {
 
                 case 'exec-command':
                     handleExecCommand(ws, payload?.command)
+                    break
+
+                case 'exec-script':
+                    handleExecScript(ws, payload?.script)
                     break
 
                 default:
@@ -120,4 +125,29 @@ function handleExecCommand(ws: WebSocket, command?: string) {
             ws.send(JSON.stringify({ type: 'exec-result', output: stdout }))
         }
     })
+}
+
+export function handleExecScript(ws: WebSocket, script?: string) {
+  if (!script) {
+    ws.send(JSON.stringify({ type: 'error', error: 'Script no proporcionado' }))
+    return
+  }
+
+  // ✅ Ruta segura al script
+  const scriptPath = path.join(__dirname, '../../scripts', script+".sh")
+
+  exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
+    if (error) {
+      ws.send(JSON.stringify({
+        type: 'script-error',
+        error: stderr || error.message,
+      }))
+      return
+    }
+
+    ws.send(JSON.stringify({
+      type: 'script-result',
+      output: stdout.trim(),
+    }))
+  })
 }
