@@ -6,18 +6,32 @@ interface ModuleCardProps {
   title: string
   icon: LucideIcon
   to: string
+  description?: string
   asButton?: boolean
   onClick?: () => void
 }
 
-export const ModuleCard = ({ title, icon: IconComponent, to, asButton = false, onClick }: ModuleCardProps) => {
-  const sharedClasses =
-    'flex flex-col items-center justify-center w-48 h-48 p-4 m-4 bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-200 hover:bg-gray-100 text-center'
+export const ModuleCard = ({
+  title,
+  icon: Icon,
+  to,
+  description,
+  asButton = false,
+  onClick,
+}: ModuleCardProps) => {
+  const sharedClasses = `
+    flex flex-col justify-center items-center gap-3
+    w-full max-w-xs min-h-[17rem]
+    bg-white rounded-2xl shadow-md hover:shadow-xl
+    transition-transform duration-200 hover:scale-[1.02]
+    text-center border border-gray-100 hover:border-gray-300
+  `
 
-    const content = (
+  const content = (
     <>
-      <IconComponent size={48} className="text-blue-600 mb-4" />
-      <h2 className="text-lg font-semibold">{title}</h2>
+      <Icon size={40} className="text-blue-600" />
+      <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+      {description && <p className="text-sm text-gray-600">{description}</p>}
     </>
   )
 
