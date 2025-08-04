@@ -7,7 +7,7 @@ import NotFound from '../pages/NotFound'
 import Setup from '../pages/Setup'
 import AccessControl from '../pages/AccessControl'
 import DashboardLayout from '../layouts/DashboardLayout'
-import Connected from '../pages/AccessControl/Connected'
+import CreateRule from '../pages/AccessControl/CreateRule'
 
 function AppRoutes() {
   return (
@@ -21,7 +21,7 @@ function AppRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/setup" element={<Setup />} />
           <Route path="/access-control" element={<AccessControl />} />
-          <Route path="/access-control/connected" element={<Connected/>} />
+          <Route path="/access-control/create-rule" element={<CreateRule />} />
         </Route>
       </Route>
 
