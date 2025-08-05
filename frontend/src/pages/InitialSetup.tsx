@@ -1,6 +1,5 @@
 import { Github } from 'lucide-react';
-import { useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState} from 'react';
 import { useWebSocket } from '../context/useWebSocket'
 
 
@@ -8,10 +7,8 @@ export default function InitialSetup() {
   const [form, setForm] = useState({ ip: '', user: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   const { connect } = useWebSocket();
-  useRedirectIfConfigured(navigate);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,7 +23,7 @@ export default function InitialSetup() {
     const { success, error } = await verifyAdminCredentials(form);
 
     if (success) {
-      localStorage.setItem('configured', 'true');
+      localStorage.setItem('connected', 'true');
       setResult('✅ El usuario tiene permisos sudo');
       //guarda ip y usuario
       localStorage.setItem('ipServer', form.ip);
@@ -34,8 +31,6 @@ export default function InitialSetup() {
 
       
       connect(form.ip)
-
-      setTimeout(() => navigate('/'), 1000);
     } else {
       setResult(`❌ Error: ${error || 'Credenciales inválidas'}`);
     }
@@ -54,13 +49,6 @@ export default function InitialSetup() {
       </form>
     </main>
   );
-}
-
-function useRedirectIfConfigured(navigate: ReturnType<typeof useNavigate>) {
-  useEffect(() => {
-    const isConfigured = localStorage.getItem('configured') === 'true';
-    if (isConfigured) navigate('/');
-  }, [navigate]);
 }
 
 async function verifyAdminCredentials(form: { ip: string; user: string; password: string }) {
