@@ -48,6 +48,17 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     }
   }
 
+  const disconnect = () => {
+    if (socketRef.current){
+      console.log('Desconectando WebSocket manualmente')
+      socketRef.current.close()
+      socketRef.current = null
+      setSocket(null)
+      setIsConnected(false)
+      setIsConnecting(false)
+    }
+  }
+
   //Intentar reconectar al montar el proveedor
   useEffect(() => {
     const savedIp = localStorage.getItem('ipServer')
@@ -70,7 +81,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   }, [])
 
   return (
-    <WebSocketContext.Provider value={{ socket, connect, isConnected, isConnecting}}>
+    <WebSocketContext.Provider value={{ socket, connect,disconnect, isConnected, isConnecting}}>
       {children}
     </WebSocketContext.Provider>
   )

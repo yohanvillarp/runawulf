@@ -1,15 +1,18 @@
 import { ModuleCard } from '../components/ModuleCard'
 import { Cpu, Settings, User, LogOut, Clock, Key, Bell, Network, RefreshCw, HelpCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useWebSocket } from '../context/useWebSocket'
 
 export default function Home() {
 
   const navigate = useNavigate()
+  const { disconnect } = useWebSocket()
 
   const handleClick = () => {
-    localStorage.removeItem('configured')
+    disconnect()
     localStorage.removeItem('ipServer')
     localStorage.removeItem('userServer')
+    localStorage.removeItem('connected')
     navigate('/initial-setup')
   }
 
