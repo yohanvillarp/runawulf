@@ -7,20 +7,24 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-echo "📁 Cambiando al directorio del backend..."
-cd backend || { echo "❌ No se encontró la carpeta 'backend'"; exit 1; }
+echo "🔍 Verificando versión de npm..."
+npm -v || {
+  echo "❌ npm no está instalado. Abortando..."
+  exit 1
+}
+
+echo "⬆️ Intentando actualizar npm a la última versión..."
+npm install -g npm@latest || {
+  echo "⚠️ No se pudo actualizar npm. Continuando con la versión actual..."
+}
 
 echo "🔧 Instalando dependencias del backend..."
-npm install
-
-echo "📁 Cambiando al directorio del frontend..."
-cd ../frontend || { echo "❌ No se encontró la carpeta 'frontend'"; exit 1; }
-
-echo "🔧 Instalando dependencias del frontend..."
-npm install
+npm install || {
+  echo "❌ Error al instalar dependencias. Revisa tu conexión o tu archivo package.json."
+  exit 1
+}
 
 echo "🛠️ Otorgando permisos a los scripts..."
-cd ../backend
 if [ -d scripts ]; then
   chmod +x scripts/*.sh
 else
@@ -30,4 +34,6 @@ fi
 echo "✅ Configuración completa."
 
 echo "🚀 Iniciando el backend con nodemon:"
-npx nodemon
+npx nodemon || {
+  echo "❌ nodemon no está disponible. ¿Está instalado en las dependencias?"
+}
