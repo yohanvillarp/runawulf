@@ -7,23 +7,33 @@ git clone https://github.com/yohanvillarp/runawulf.git
 cd runawulf
 ```
 
-## 🛠 Instalación del Backend - servidor
+### 🛠 Instalación del Backend - servidor
 
 2. Ejecuta el script de instalación:
 
 ```bash
 cd backend
 sudo chmod +x ./setup.sh
-sudo ./setup.sh
+./setup.sh
 ```
 
-## 🛠 Instalación del Frontend - cliente
+3. Inicia el servidor:
 
+```bash
+npm run dev
+```
 
+### 🛠 Instalación del Frontend - cliente
 
 2. Instala dependencias:
 
 ```bash
 cd frontend
 npm install
+```
+
+3. Inicia el proyecto:
+
+```bash
+npm run dev
 ```
