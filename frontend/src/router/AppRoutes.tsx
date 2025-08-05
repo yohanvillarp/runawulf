@@ -5,10 +5,12 @@ import InitialSetup from '../pages/InitialSetup'
 import ProtectedRoute from './ProtectecRoute'
 import NotFound from '../pages/NotFound'
 import Setup from '../pages/Setup'
-import AccessControl from '../pages/AccessControl'
+import AccessControl from '../pages/FirewallControl'
 import DashboardLayout from '../layouts/DashboardLayout'
-import CreateRule from '../pages/AccessControl/CreateRule'
+import CreateRule from '../pages/ControlFirewall/CreateRule'
 import RedirectIfConfigured from '../components/RedirectIfConfigured'
+import SystemMonitor from '../pages/SystemMonitor'
+import IntrusionDetection from '../pages/IntrusionDetection'
 
 function AppRoutes() {
   return (
@@ -22,8 +24,10 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/setup" element={<Setup />} />
-            <Route path="/access-control" element={<AccessControl />} />
-            <Route path="/access-control/create-rule" element={<CreateRule />} />
+            <Route path="/firewall-control" element={<AccessControl />} />
+            <Route path="/firewall-control/create-rule" element={<CreateRule />} />
+            <Route path="/system-monitor" element={<SystemMonitor />} />
+            <Route path="/intrusion-detection" element={<IntrusionDetection />} />
           </Route>
         </Route>
 

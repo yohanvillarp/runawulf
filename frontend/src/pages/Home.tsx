@@ -1,5 +1,5 @@
 import { ModuleCard } from '../components/ModuleCard'
-import { Cpu, Settings, User, LogOut, Clock, Key, Bell, Network, RefreshCw, HelpCircle } from 'lucide-react'
+import { Cpu, Settings, LogOut, Clock, Key, Bell,  Shield, HelpCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useWebSocket } from '../context/useWebSocket'
 
@@ -25,17 +25,14 @@ export default function Home() {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-        <ModuleCard title="Monitor de Sistema" icon={Cpu} to="/monitor" />
-        <ModuleCard title="Gestión de Usuarios" icon={User} to="/users" />
+        <ModuleCard title="Monitor de Sistema" icon={Cpu} to="/system-monitor" />
+        <ModuleCard title="Control de Firewall" icon={Key} to="/firewall-control" />
+        <ModuleCard title="Detección de intrusos" icon={Shield} to="/intrusion-detection" />
         <ModuleCard title="Historial de Actividad" icon={Clock} to="/activity-log" />
-        <ModuleCard title="Control de Acceso" icon={Key} to="/access-control" />
         <ModuleCard title="Notificaciones" icon={Bell} to="/notifications" />
-        <ModuleCard title="Estado de Red" icon={Network} to="/network-status" />
-        <ModuleCard title="Actualizaciones" icon={RefreshCw} to="/updates" />
         <ModuleCard title="Soporte" icon={HelpCircle} to="/support" />
         <ModuleCard title="Configuración" icon={Settings} to="/setup" />
         <ModuleCard title="Cerrar sesión" icon={LogOut} to="/initial-setup" asButton onClick={handleClick} />
-
       </div>
     </div>
   )
