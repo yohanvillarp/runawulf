@@ -49,12 +49,13 @@ Estas ramas se crean temporalmente y se eliminan después de hacer *merge*:
 
 3. Cuando termines, integra tu rama a `develop`:
    ```bash
+   git push -u origin feature/nombre-de-tu-rama
+   crea un Pull Request (PR) en GitHub desde feature/nombre-de-tu-rama hacia develop
    git checkout develop
-   git merge feature/nombre-de-tu-rama
    git branch -d feature/nombre-de-tu-rama
    ```
 
-4. Cuando estés listo para publicar:
+4. Cuando estés listo para publicar (omitir):
    ```bash
    git checkout main
    git merge develop
