@@ -11,13 +11,15 @@ export default function CreateRule() {
     action: "Permitir",
     from: "",
     to: "",
-    type: "Servicio", // Nuevo selector: Puerto o Servicio
-    service: "ssh",
-    port: 80,
+    type: "Servicio",
+    service: "",
+    port: 0,
+    protocol: "Todos",
   });
+  const protocolOptions = ["Todos", "Auto", "TCP", "UDP"];
   const { socket, lastMessage } = useWebSocket();
 
-  const [interfaces, setInterfaces] = useState([""]); // valor por defecto opcional
+  const [interfaces, setInterfaces] = useState([""]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -25,12 +27,12 @@ export default function CreateRule() {
     if (lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT) {
       if (lastMessage.script === "get_things.sh") {
         const lines = (lastMessage.output as string).trim().split('\n');
-        setInterfaces([...lines, "Todas las interfaces"]);
+        setInterfaces([...lines, "todas las interfaces"]);
       } else if (lastMessage.script === "iptables_rules.sh") {
         Swal.fire({
-          title: `${lastMessage.type}`,
-          text: `${lastMessage.output}`,
-          icon: 'info',
+          title: `Prueba exitosa`,
+          text: `Regla ejecutada: ${lastMessage.output}`,
+          icon: 'success',
           confirmButtonText: 'Confirmado',
           customClass: {
             confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700',
@@ -62,10 +64,16 @@ export default function CreateRule() {
       return (
         <input
           type="number"
+          min="1"
+          inputMode="numeric"
           className="w-full rounded-lg border border-gray-300 px-4 py-2 mt-2"
           placeholder="Ej: 80"
-          value={rule.port}
-          onChange={(e) => setRule({ ...rule, port: parseInt(e.target.value) })}
+          value={rule.port <= 0 ? "" : rule.port}
+          onChange={(e) => {
+            const value = e.target.value;
+            setRule({ ...rule, port: value <= "" ? 0 : parseInt(value) || 0 });
+          }}
+
         />
       );
     } else {
@@ -85,6 +93,47 @@ export default function CreateRule() {
     return rule.type === "Puerto" ? rule.port : rule.service;
   };
 
+  const handleSubmit = () => {
+    if (!socket) {
+      alert("⚠️ No estás conectado al servidor WebSocket.");
+      return;
+    }
+    // Validación: si protocolo es Auto, se debe especificar puerto o servicio
+    if (
+      rule.protocol === "Auto" &&
+      (
+        (rule.type === "Puerto" && (!rule.port || rule.port <= 0)) ||
+        (rule.type === "Servicio" && !rule.service.trim())
+      )
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Falta información",
+        text: "Debes especificar un puerto o servicio si seleccionas protocolo 'Auto'.",
+        confirmButtonText: "Entendido",
+        customClass: {
+          confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700',
+        }
+      });
+      return;
+    }
+    socket.send(JSON.stringify({
+      type: "exec-script",
+      payload: {
+        script: "iptables_rules",
+        params: [
+          rule.direction.toLowerCase(),
+          getFinalValue(),
+          rule.from,
+          rule.to,
+          rule.protocol.toLowerCase(),
+          rule.action.toLowerCase(),
+        ],
+      },
+    }));
+  }
+
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <Title>
@@ -101,7 +150,14 @@ export default function CreateRule() {
               backgroundColor="bg-blue-700"
               options={["Entrada", "Salida"]}
               value={rule.direction}
-              onChange={(value) => setRule({ ...rule, direction: value })}
+              onChange={(value) => {
+                setRule({
+                  ...rule,
+                  direction: value,
+                  from: "",
+                  to: "",
+                });
+              }}
             />
           </div>
 
@@ -111,7 +167,7 @@ export default function CreateRule() {
             </label>
             <Dropdown
               backgroundColor="bg-red-700"
-              options={["Permitir", "Denegar", "Rechazar", "Limitar"]}
+              options={["Permitir", "Denegar", "Rechazar"]}
               value={rule.action}
               onChange={(value) => setRule({ ...rule, action: value })}
             />
@@ -119,105 +175,123 @@ export default function CreateRule() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-50 to-white shadow-lg rounded-xl p-6 border border-gray-300 mt-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Sección de origen y destino */}
-          <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-4">Direcciones</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+        {/* Panel de Direcciones */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+          <h3 className="text-md font-semibold text-gray-800 mb-4">Direcciones</h3>
 
-            <label>{rule.direction === "Salida" ? "Origen (interfaz local)" : "Origen (IP remota)"}</label>
-            {rule.direction === "Salida" ? (
-              <Dropdown
-                backgroundColor="bg-green-700"
-                options={interfaces}
-                value={rule.from}
-                onChange={(value) => setRule({ ...rule, from: value })}
-              />
-
+          <p className="text-sm text-gray-600 mb-4">
+            Define el origen y destino del tráfico de red.
+            {rule.direction === "Entrada" ? (
+              <>
+                {" "}
+                Si la regla es de <strong>entrada</strong>, el <strong>origen</strong> corresponde a una dirección IP remota
+                , y el <strong>destino</strong> es una interfaz local.
+              </>
             ) : (
-              <input
-                type="text"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 mt-2"
-                placeholder="192.168.1.4"
-                value={rule.from}
-                onChange={(e) => setRule({ ...rule, from: e.target.value })}
-              />
+              <>
+                {" "}
+                Si la regla es de <strong>salida</strong>, el <strong>origen</strong> será la interfaz local
+                , y el <strong>destino</strong> es la dirección IP remota.
+              </>
             )}
+          </p>
 
-            <label className="mt-4 block">{rule.direction === "Salida" ? "Destino (IP remota)" : "Destino (interfaz local)"}</label>
-            {rule.direction === "Salida" ? (
-              <input
-                type="text"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 mt-2"
-                placeholder="192.168.1.5"
-                value={rule.to}
-                onChange={(e) => setRule({ ...rule, to: e.target.value })}
-              />
-            ) : (
-              <Dropdown
-                backgroundColor="bg-green-700"
-                options={interfaces}
-                value={rule.to}
-                onChange={(value) => setRule({ ...rule, to: value })}
-              />
-
-            )}
-          </div>
-
-          {/* Sección de puerto o servicio */}
-          <div>
-            <h3 className="text-md font-semibold text-gray-800 mb-4">Puerto o Servicio</h3>
-
-            <label className="block">Tipo de selector</label>
+          <label>{rule.direction === "Salida" ? "Origen (interfaz local)" : "Origen (IP remota)"}</label>
+          {rule.direction === "Salida" ? (
             <Dropdown
-              backgroundColor="bg-purple-700"
-              options={["Puerto", "Servicio"]}
-              value={rule.type}
-              onChange={(value) => setRule({ ...rule, type: value })}
+              backgroundColor="bg-green-700"
+              options={interfaces}
+              value={rule.from}
+              onChange={(value) => setRule({ ...rule, from: value })}
             />
+          ) : (
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 mt-2"
+              placeholder="192.168.1.4"
+              value={rule.from}
+              onChange={(e) => setRule({ ...rule, from: e.target.value })}
+            />
+          )}
 
-            <label className="mt-4 block">{rule.type === "Puerto" ? "Puerto" : "Servicio"}</label>
-            {renderPortOrService()}
-          </div>
+          <label className="mt-4 block">{rule.direction === "Salida" ? "Destino (IP remota)" : "Destino (interfaz local)"}</label>
+          {rule.direction === "Salida" ? (
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 mt-2"
+              placeholder="192.168.1.5"
+              value={rule.to}
+              onChange={(e) => setRule({ ...rule, to: e.target.value })}
+            />
+          ) : (
+            <Dropdown
+              backgroundColor="bg-green-700"
+              options={interfaces}
+              value={rule.to}
+              onChange={(value) => setRule({ ...rule, to: value })}
+            />
+          )}
+        </div>
+
+        {/* Panel de Puerto o Servicio */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+          <h3 className="text-md font-semibold text-gray-800 mb-4">Puerto o Servicio</h3>
+
+          <label className="block">Tipo de selector</label>
+          <Dropdown
+            backgroundColor="bg-purple-700"
+            options={["Puerto", "Servicio"]}
+            value={rule.type}
+            onChange={(value) => setRule({ ...rule, type: value })}
+          />
+
+          <label className="mt-4 block">Protocolo</label>
+          <Dropdown
+            backgroundColor="bg-indigo-700"
+            options={protocolOptions}
+            value={rule.protocol}
+            onChange={(value) => setRule({ ...rule, protocol: value })}
+          />
+          {rule.protocol === "Auto" && (
+            <p className="text-sm text-gray-500 mt-1">
+              El protocolo se detectará automáticamente según el puerto o servicio.
+            </p>
+          )}
+
+          <label className="mt-4 block">{rule.type === "Puerto" ? "Puerto" : "Servicio"}</label>
+          {renderPortOrService()}
         </div>
       </div>
-
 
       <div className="bg-gradient-to-br from-gray-50 to-white shadow-lg rounded-xl p-6 border border-gray-300 mt-6">
         <h2 className="text-lg font-bold text-gray-800 mb-4">Regla generada</h2>
         <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-gray-100 rounded-lg px-4 py-3 border border-gray-300 gap-4">
           <code className="text-sm text-gray-800 font-mono">
-            {rule.action.toLowerCase()} {rule.direction.toLowerCase()} de {rule.from} a {rule.to} usando {getFinalValue()}
+            {rule.action === "Permitir" && "Permitir el tráfico "}
+            {rule.action === "Denegar" && "Denegar el tráfico "}
+            {rule.action === "Rechazar" && "Rechazar el tráfico "}
+            {rule.direction && `de ${rule.direction.toLowerCase()} `}
+            {rule.from && `desde la dirección IP ${rule.from} `}
+            {rule.to &&
+              `hacia ${rule.to === "todas las interfaces"
+                ? "todas las interfaces de red"
+                : `la interfaz ${rule.to}`
+              } `}
+            {rule.type === "Puerto" && rule.port > 0 && `mediante el puerto ${rule.port} `}
+            {rule.type === "Servicio" && rule.service && `mediante el servicio ${rule.service} `}
+            {rule.protocol &&
+              (rule.protocol.toUpperCase() === "AUTO"
+                ? "(el protocolo se determinará automáticamente según el puerto o servicio)"
+                : rule.protocol.toUpperCase() === "TODOS"
+                  ? "utilizando todos los protocolos disponibles"
+                  : `utilizando el protocolo ${rule.protocol.toUpperCase()}`)}
+            .
           </code>
 
           <div className="flex gap-3">
             <button
-              onClick={() => navigator.clipboard.writeText(`${rule.action.toLowerCase()} ${rule.direction.toLowerCase()} de ${rule.from} a ${rule.to} usando ${getFinalValue()}`)}
-              className="text-sm text-blue-600 font-semibold hover:underline"
-            >
-              Copiar
-            </button>
-
-            <button
-              onClick={() => {
-                if (!socket) {
-                  alert("⚠️ No estás conectado al servidor WebSocket.");
-                  return;
-                }
-                socket.send(JSON.stringify({
-                  type: "exec-script",
-                  payload: {
-                    script: "iptables_rules",
-                    params: [
-                      rule.direction.toLowerCase(),
-                      getFinalValue(),
-                      rule.from,
-                      rule.to,
-                      rule.action.toLowerCase(),
-                    ],
-                  },
-                }));
-              }}
+              onClick={handleSubmit}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
               Ejecutar
