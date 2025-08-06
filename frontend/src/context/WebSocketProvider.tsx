@@ -1,11 +1,16 @@
 import { useRef, useState, useEffect } from 'react'
 import { WebSocketContext } from './WebSocketContext'
+import type { ServerMessage } from './WebSocketContext'
 
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const socketRef = useRef<WebSocket | null>(null)
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [lastMessage, setLastMessage] = useState<ServerMessage | null>(null)
+
+
+
 
   const connect = (ip: string) => {
     if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
@@ -22,14 +27,28 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     const ws = new WebSocket(`ws://${ip}:4000`)
     socketRef.current = ws
     setSocket(ws)
-    
+
     ws.onopen = () => {
       console.log('🟢 Conectado al WebSocket')
       setIsConnected(true)
-       setIsConnecting(false)
+      setIsConnecting(false)
     }
 
-    ws.onmessage = (e) => console.log('📩', e.data)
+    ws.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+
+        if (typeof data === 'object' && data !== null && 'type' in data) {
+          setLastMessage(data as ServerMessage);
+          console.log('📩 Mensaje válido recibido:', data);
+        } else {
+          console.warn(' Mensaje inválido recibido (sin campo "type"):', data);
+        }
+      } catch (error) {
+        console.error(' Error al parsear mensaje WebSocket:', error);
+      }
+    }
+
 
     ws.onclose = () => {
       console.log('🔌 WebSocket cerrado')
@@ -49,7 +68,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   }
 
   const disconnect = () => {
-    if (socketRef.current){
+    if (socketRef.current) {
       console.log('Desconectando WebSocket manualmente')
       socketRef.current.close()
       socketRef.current = null
@@ -81,7 +100,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   }, [])
 
   return (
-    <WebSocketContext.Provider value={{ socket, connect,disconnect, isConnected, isConnecting}}>
+    <WebSocketContext.Provider value={{ socket, connect, disconnect, isConnected, isConnecting, lastMessage }}>
       {children}
     </WebSocketContext.Provider>
   )
