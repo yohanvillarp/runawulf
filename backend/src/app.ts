@@ -55,7 +55,7 @@ export const startServer = () => {
                     break
 
                 case 'exec-script':
-                    handleExecScript(ws, payload?.script+".sh")
+                    handleExecScript(ws, payload?.script+".sh", payload?.params || [])
                     break
 
                 default:
@@ -127,7 +127,7 @@ function handleExecCommand(ws: WebSocket, command?: string) {
     })
 }
 
-export function handleExecScript(ws: WebSocket, script?: string) {
+export function handleExecScript(ws: WebSocket, script?: string, params?: string[]) {
   if (!script) {
     ws.send(JSON.stringify({ type: 'error', error: 'Script no proporcionado' }))
     return
@@ -135,10 +135,15 @@ export function handleExecScript(ws: WebSocket, script?: string) {
 
   // Ruta segura al script
   const scriptPath = path.join(__dirname, '../scripts', script)
+  
+  //evita inyecciones de forma básica
+  const joinedParams = (params || []).join(' ')
 
-  exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
-    if (error) {
-      ws.send(JSON.stringify({
+  const fullCommand = `bash ${scriptPath} ${joinedParams}`
+
+  exec(fullCommand, (error, stdout, stderr) => {
+    if(error){
+        ws.send(JSON.stringify({
         type: 'script-error',
         error: stderr || error.message,
       }))
@@ -147,6 +152,7 @@ export function handleExecScript(ws: WebSocket, script?: string) {
 
     ws.send(JSON.stringify({
       type: 'script-result',
+      script: script,
       output: stdout.trim(),
     }))
   })
