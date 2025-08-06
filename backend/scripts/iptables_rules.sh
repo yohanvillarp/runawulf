@@ -5,7 +5,8 @@ direction=$1                        # INPUT, OUTPUT, FORWARD
 portOrService=$2                   # Puede ser número de puerto o nombre de servicio
 ipOrigenOrInterfaz=$3             # IP o interfaz de origen
 ipDestinoOrInterfaz=$4            # IP o interfaz de destino
-action=$5                          # ACCEPT, DROP, REJECT, etc.
+protocol=$5                       # TCP, UDP, auto, ICMP
+action=$6                          # ACCEPT, DROP, REJECT, etc.
 
 # Convertir dirección (entrada/salida/reenviar) a INPUT/OUTPUT/FORWARD
 case "$direction" in
@@ -16,31 +17,47 @@ esac
 # Convertir acción (permitir/bloquear/rechazar) a ACCEPT/DROP/REJECT
 case "$action" in
   permitir) action="ACCEPT" ;;
-  bloquear) action="DROP" ;;
+  denegar) action="DROP" ;;
   rechazar) action="REJECT" ;;
+esac
+
+# Convertir extras
+case "$ipOrigenOrInterfaz" in
+  "todas las interfaces") ipOrigenOrInterfaz="" ;;
+esac
+
+case "$ipDestinoOrInterfaz" in
+  "todas las interfaces") ipDestinoOrInterfaz="" ;;
 esac
 
 
 # Inicialización
 regla="iptables -A $direction"
-protocol=""
 port=""
 ruleOptions=""
 
-# Obtener protocolo y puerto
+# Obtener puerto
 if [[ "$portOrService" =~ ^[0-9]+$ ]]; then
-  protocol=$(getent services "$portOrService" | awk '{print $2}' | cut -d/ -f2)
+  # si es un puerto
   port=$portOrService
+  if [ "$port" == 0 ]; then
+    port=""
+  fi
 else
+  #si es el nombre de un servicio
   port=$(getent services "$portOrService" | awk '{print $2}' | cut -d/ -f1)
-  protocol=$(getent services "$portOrService" | awk '{print $2}' | cut -d/ -f2)
 fi
 
-# Valor por defecto
-protocol=${protocol:-tcp}  # Usa tcp por defecto si no se detecta
+# Obtener protocolo
+if [ "$protocol" == "auto" && "$port" != "" ]; then
+  protocol=$(getent services "$portOrService" | awk '{print $2}' | cut -d/ -f2)
+  protocol=${protocol:-tcp}
+fi
 
-# Agregar protocolo
-regla+=" -p $protocol"
+if [ "$port" != "" ]; then
+  # Agregar protocolo
+  regla+=" -p $protocol"
+fi
 
 # Agregar IPs o interfaces según dirección
 if [ "$direction" == "INPUT" ]; then
@@ -69,3 +86,5 @@ regla+=" $ruleOptions -j $action"
 
 # Mostrar regla construida
 echo "$regla"
+#ejecutar regla
+#eval "$regla"

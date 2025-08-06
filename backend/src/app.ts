@@ -137,7 +137,10 @@ export function handleExecScript(ws: WebSocket, script?: string, params?: string
   const scriptPath = path.join(__dirname, '../scripts', script)
   
   //evita inyecciones de forma básica
-  const joinedParams = (params || []).join(' ')
+  const joinedParams = (params || [])
+  .map(p => `"${String(p ?? '').replace(/"/g, '\\"')}"`)
+  .join(' ');
+
 
   const fullCommand = `bash ${scriptPath} ${joinedParams}`
 
