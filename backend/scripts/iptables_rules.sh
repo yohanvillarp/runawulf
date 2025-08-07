@@ -5,13 +5,18 @@ direction=$1                        # INPUT, OUTPUT, FORWARD
 portOrService=$2                   # Puede ser número de puerto o nombre de servicio
 ipOrigenOrInterfaz=$3             # IP o interfaz de origen
 ipDestinoOrInterfaz=$4            # IP o interfaz de destino
-protocol=$5                       # TCP, UDP, auto, ICMP
+protocol=$5                       # TCP, UDP, auto, todos
 action=$6                          # ACCEPT, DROP, REJECT, etc.
 
 # Convertir dirección (entrada/salida/reenviar) a INPUT/OUTPUT/FORWARD
 case "$direction" in
   entrada) direction="INPUT" ;;
   salida) direction="OUTPUT" ;;
+esac
+
+# Convertir protocolo
+case "$protocol" in
+  todos) protocol="" ;;
 esac
 
 # Convertir acción (permitir/bloquear/rechazar) a ACCEPT/DROP/REJECT
@@ -49,12 +54,12 @@ else
 fi
 
 # Obtener protocolo
-if [ "$protocol" == "auto" && "$port" != "" ]; then
+if [[ "$protocol" == "auto" && "$port" != "" ]]; then
   protocol=$(getent services "$portOrService" | awk '{print $2}' | cut -d/ -f2)
   protocol=${protocol:-tcp}
 fi
 
-if [ "$port" != "" ]; then
+if [ -n "$port" ] && [ -n "$protocol" ]; then
   # Agregar protocolo
   regla+=" -p $protocol"
 fi
