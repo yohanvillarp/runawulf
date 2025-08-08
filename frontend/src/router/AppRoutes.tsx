@@ -11,6 +11,7 @@ import CreateRule from '../pages/ControlFirewall/CreateRule'
 import RedirectIfConfigured from '../components/RedirectIfConfigured'
 import SystemMonitor from '../pages/SystemMonitor'
 import IntrusionDetection from '../pages/IntrusionDetection'
+import ViewRules from '../pages/ControlFirewall/ViewRules'
 
 function AppRoutes() {
   return (
@@ -26,6 +27,8 @@ function AppRoutes() {
             <Route path="/setup" element={<Setup />} />
             <Route path="/firewall-control" element={<AccessControl />} />
             <Route path="/firewall-control/create-rule" element={<CreateRule />} />
+            <Route path="/firewall-control/view-rules" element={<ViewRules />} />
+
             <Route path="/system-monitor" element={<SystemMonitor />} />
             <Route path="/intrusion-detection" element={<IntrusionDetection />} />
           </Route>
