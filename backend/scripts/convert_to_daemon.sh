@@ -1,12 +1,21 @@
 #!/bin/bash
 
-# Configura rutas
+# Nombre de la app
 APP_NAME="runawulf"
-NODE_PATH="$(which ts-node)"
-APP_PATH="$(realpath ../src/app.ts)"
-WORK_DIR="$(realpath ../src)"   
-USER_NAME="$(whoami)"                 
 
+# Usuario que ejecutará el servicio
+USER_NAME="$(whoami)"
+
+# Directorio de trabajo (backend)
+WORK_DIR="$(realpath ../backend)"
+
+# Ruta al archivo principal (index.ts)
+ENTRY_FILE="src/index.ts"
+
+# Ruta a nvm.sh
+NVM_PATH="$HOME/.nvm/nvm.sh"
+
+# Ruta final del servicio
 SERVICE_FILE="/etc/systemd/system/$APP_NAME.service"
 
 # Crear archivo .service
@@ -18,7 +27,7 @@ Description=Servicio Node.js: $APP_NAME
 After=network.target
 
 [Service]
-ExecStart=$NODE_PATH $APP_PATH
+ExecStart=/bin/bash -c 'source $NVM_PATH && npx ts-node $ENTRY_FILE'
 WorkingDirectory=$WORK_DIR
 Restart=always
 User=$USER_NAME
@@ -28,24 +37,23 @@ Environment=NODE_ENV=production
 WantedBy=multi-user.target
 EOF
 
-# Recargar systemd y habilitar servicio
-echo "Recargando systemd y activando servicio..."
-
+# Recargar systemd
+echo "Recargando systemd..."
 sudo systemctl daemon-reload
 
+# Preguntar persistencia
 echo
-read -p "Desea que el servicio $APP_NAME sea persistente? (S/N): " isPersistent
-
-# Convertir a mayusculas
-isPersistent=$(echo "$isPersistent" | tr '[:lower:]' '[:upper:]' )
+read -p "¿Desea que el servicio $APP_NAME sea persistente? (S/N): " isPersistent
+isPersistent=$(echo "$isPersistent" | tr '[:lower:]' '[:upper:]')
 
 if [[ "$isPersistent" == "S" || "$isPersistent" == "SI" ]]; then
-    echo "Servicio persistente."
     sudo systemctl enable $APP_NAME
+    echo "Servicio persistente habilitado."
 else
     echo "Servicio no persistente."
 fi
 
+# Iniciar servicio
 sudo systemctl start $APP_NAME
 
 echo "Servicio $APP_NAME creado e iniciado con éxito."
