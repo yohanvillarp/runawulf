@@ -9,7 +9,7 @@ export function handleExecScript(ws: WebSocket, script?: string, params?: string
   }
 
   // Ruta segura al script
-  const scriptPath = path.join(__dirname, '../scripts', script)
+  const scriptPath = path.join(__dirname, '../../scripts', script)
   
   //evita inyecciones de forma básica
   const joinedParams = (params || [])
