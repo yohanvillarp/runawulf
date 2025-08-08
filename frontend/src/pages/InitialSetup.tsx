@@ -53,7 +53,7 @@ export default function InitialSetup() {
 
 async function verifyAdminCredentials(form: { ip: string; user: string; password: string }) {
   try {
-    const res = await fetch(`http://${form.ip}:4000/api/commands/verify-admin`, {
+    const res = await fetch(`http://${form.ip}:4000/api/admin/verify-admin`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user: form.user, password: form.password }),
@@ -62,7 +62,7 @@ async function verifyAdminCredentials(form: { ip: string; user: string; password
     return { success: data.success, error: data.error };
   } catch (error) {
     console.error(error);
-    return { success: false, error: '⚠️ No se pudo conectar con el servidor' };
+    return { success: false, error: 'No se pudo conectar con el servidor' };
   }
 }
 
