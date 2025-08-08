@@ -1,39 +1,46 @@
-## 🛠 Instalación general
+# RUNAWULF 🐺  
+Plataforma para la gestión sencilla de servidores.
 
-1. Clona el repositorio:
+---
 
+## 📦 Instalación General
+
+### 1️⃣ Clonar el repositorio
 ```bash
 git clone https://github.com/yohanvillarp/runawulf.git
 cd runawulf
+npm install
 ```
 
-### 🛠 Instalación del Backend - servidor
 
-2. Ejecuta el script de instalación:
-
+### 2️⃣ Instalación del Backend - servidor
 ```bash
 cd backend
 sudo chmod +x ./setup.sh
 ./setup.sh
 ```
 
-3. Inicia el servidor:
-
+### 3️⃣ Iniciar el backend en modo desarrollo
 ```bash
 npm run dev
 ```
 
-### 🛠 Instalación del Frontend - cliente
+💡 Tip: Si quieres que el backend esté siempre activo incluso después de reiniciar el servidor, puedes convertirlo en un demonio.
 
-2. Instala dependencias:
+#### 🔄 Convertir a demonio
+```bash
+sudo ./convert_to_daemon.sh
+```
 
+💻 Frontend (Cliente Web)
+El frontend es la interfaz visual que permite administrar el servidor desde el navegador.
+
+4️⃣ Instalar dependencias
 ```bash
 cd frontend
 npm install
 ```
-
-3. Inicia el proyecto:
-
+5️⃣ Iniciar el cliente en modo desarrollo
 ```bash
 npm run dev
 ```
