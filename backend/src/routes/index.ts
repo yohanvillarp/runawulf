@@ -1,10 +1,8 @@
 import { Router } from 'express'
-import serverRoutes from './server.routes'
-import commandsRoutes from './commands.routes'
+import verifyAdminRoutes from './verify-admin.routes'
 
 const router = Router()
 
-router.use('/server', serverRoutes)
-router.use('/commands', commandsRoutes)
+router.use('/admin', verifyAdminRoutes)
 
 export default router
