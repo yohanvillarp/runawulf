@@ -6,8 +6,8 @@ APP_NAME="runawulf"
 # Usuario que ejecutará el servicio
 USER_NAME="$(whoami)"
 
-# Directorio de trabajo (backend)
-WORK_DIR="$(realpath ../backend)"
+# Directorio de trabajo (carpeta raíz del backend)
+WORK_DIR="$(realpath ..)"
 
 # Ruta al archivo principal (index.ts)
 ENTRY_FILE="src/index.ts"
