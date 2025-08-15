@@ -34,14 +34,30 @@ export default function CreateRule() {
 
   const [interfaces, setInterfaces] = useState([""]);
 
+  const ip = localStorage.getItem('ipServer');
+
+  useEffect(() => {
+    const fetchInterfaces = async () => {
+      try {
+        const res = await fetch(`http://${ip}:4000/system/api/get?thing=interfaces`);
+        if (!res.ok) throw new Error("Error obteniendo interfaces");
+
+        const data = await res.json();
+        setInterfaces([...data, "todas las interfaces"]);
+      } catch (err) {
+        console.error("Error al obtener interfaces:", err);
+      }
+    };
+
+    fetchInterfaces();
+  }, [ip]);
+
+
   useEffect(() => {
     if (!lastMessage) return;
 
     if (lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT) {
-      if (lastMessage.script === "get_things.sh") {
-        const lines = (lastMessage.output as string).trim().split('\n');
-        setInterfaces([...lines, "todas las interfaces"]);
-      } else if (lastMessage.script === "iptables_rules.sh") {
+      if (lastMessage.script === "iptables_rules.sh") {
         Swal.fire({
           title: `Prueba exitosa`,
           text: `Regla ejecutada: ${lastMessage.output}`,
@@ -58,19 +74,6 @@ export default function CreateRule() {
       alert("Error: " + String(lastMessage.output));
     }
   }, [lastMessage]);
-
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.send(JSON.stringify({
-      type: "exec-script",
-      payload: {
-        script: "get_things", // asegúrate que el nombre sea correcto
-        params: ["interfaces"]
-      }
-    }));
-  }, [socket]);
 
 
   const getFinalValue = () => {
