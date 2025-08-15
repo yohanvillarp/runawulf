@@ -15,6 +15,9 @@ export const getThings = (req: Request, res: Response) => {
     if (error) {
       return res.status(500).json({ error: stderr || error.message });
     }
-    res.send(stdout.trim());
+
+    // salida array JSON
+    const lines = stdout.split("\n").filter(Boolean);
+    res.json({ data: lines });
   });
 };

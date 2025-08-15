@@ -39,11 +39,11 @@ export default function CreateRule() {
   useEffect(() => {
     const fetchInterfaces = async () => {
       try {
-        const res = await fetch(`http://${ip}:4000/system/api/get?thing=interfaces`);
+        const res = await fetch(`http://${ip}:4000/api/system/get?thing=interfaces`);
         if (!res.ok) throw new Error("Error obteniendo interfaces");
 
-        const data = await res.json();
-        setInterfaces([...data, "todas las interfaces"]);
+        const json = await res.json();
+        setInterfaces([...json.data, "todas las interfaces"]);
       } catch (err) {
         console.error("Error al obtener interfaces:", err);
       }
