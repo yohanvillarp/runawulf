@@ -2,39 +2,120 @@ import { useEffect, useState } from "react";
 import RulesTable, { type Rule as TableRule } from "../../components/ControlFirewall/RulesTable";
 import { useWebSocket } from "../../context/useWebSocket";
 import { WEBSOCKET_MESSAGE_TYPES } from "../../constants/webSocketTypes";
+import Swal from 'sweetalert2';
 
-
-type ScriptRulesResponse = {
-  INPUT?: { num: string | number; description: string }[];
-  OUTPUT?: { num: string | number; description: string }[];
+type BackendRule = {
+  num: string | number;
+  direction: "Entrada" | "Salida";
+  action: "Permitir" | "Denegar" | "Rechazar";
+  from: string;
+  to: string;
+  type: "Puerto" | "Servicio";
+  port?: number | null;
+  service?: string;
+  protocol: string;
+  active: boolean;
 };
+
 
 export default function ViewRules() {
   const { socket, lastMessage } = useWebSocket();
+  const ip = localStorage.getItem('ipServer');
 
   const [rulesInput, setRulesInput] = useState<TableRule[]>([]);
+
   const [rulesOutput, setRulesOutput] = useState<TableRule[]>([]);
 
-  const handleDelete = (id: string, chain: "INPUT" | "OUTPUT") => {
-    if (chain === "INPUT") {
-      setRulesInput(prev => prev.filter(r => r.id !== id));
-    } else {
-      setRulesOutput(prev => prev.filter(r => r.id !== id));
+  const handleDelete = async (id: string, chain: "INPUT" | "OUTPUT") => {
+    // Encuentra la regla que se va a eliminar
+    const ruleToDelete = (chain === "INPUT" ? rulesInput : rulesOutput).find(r => r.id === id);
+    if (!ruleToDelete) return;
+
+    try {
+      // Llamada al backend para eliminar la regla
+      const res = await fetch(`http://${ip}:4000/api/system/delete/thing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          thing: "iptables_rules",
+          params: [chain, ruleToDelete.num], // pasar cadena y número de regla
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Error eliminando regla");
+      }
+
+      const data = await res.json();
+      console.log("Regla eliminada:", data.output);
+
+      // Actualizar estado local
+      if (chain === "INPUT") {
+        setRulesInput(prev => prev.filter(r => r.id !== id));
+      } else {
+        setRulesOutput(prev => prev.filter(r => r.id !== id));
+      }
+
+    } catch (error: unknown) {
+      let message = "Error desconocido";
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      console.error("Error eliminando regla:", message);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: `No se pudo eliminar la regla: ${message}`,
+      });
     }
   };
 
-  const handleMove = (fromIndex: number, toIndex: number, chain: "INPUT" | "OUTPUT") => {
-    const moveItem = (arr: TableRule[]) => {
-      const copy = [...arr];
-      const [moved] = copy.splice(fromIndex, 1);
-      copy.splice(toIndex, 0, moved);
-      return copy;
-    };
 
-    if (chain === "INPUT") {
-      setRulesInput(prev => moveItem(prev));
-    } else {
-      setRulesOutput(prev => moveItem(prev));
+  const handleMove = async (fromIndex: number, toIndex: number, chain: "INPUT" | "OUTPUT") => {
+    try {
+      const res = await fetch(`http://${ip}:4000/api/system/update/thing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          thing: "move_iptables_rules",
+          params: [chain, (fromIndex+1), (toIndex+1)], // pasar cadena y números de regla
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Error moviendo regla");
+      }
+
+      const data = await res.json();
+      console.log("Regla movida:", data.output);
+
+      // Actualiza estado local
+      const moveItem = (arr: TableRule[]) => {
+        const copy = [...arr];
+        const [moved] = copy.splice(fromIndex, 1);
+        copy.splice(toIndex, 0, moved);
+        return copy;
+      };
+
+      if (chain === "INPUT") {
+        setRulesInput(prev => moveItem(prev));
+      } else {
+        setRulesOutput(prev => moveItem(prev));
+      }
+
+    } catch (error: unknown) {
+      let message = "Error desconocido";
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      console.error("Error actualizando regla:", message);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: `No se pudo actualizar la regla: ${message}`,
+      });
     }
   };
 
@@ -54,7 +135,7 @@ export default function ViewRules() {
 
     socket.send(JSON.stringify({
       type: "exec-script",
-      payload: { 
+      payload: {
         script: "get_iptables_rules",
       }
     }));
@@ -63,35 +144,52 @@ export default function ViewRules() {
   useEffect(() => {
     if (!lastMessage) return;
 
-    if (lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT &&
-        lastMessage.script === "get_iptables_rules.sh") {
+    if (
+      lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT &&
+      lastMessage.script === "get_iptables_rules.sh"
+    ) {
       try {
-        const data: ScriptRulesResponse = JSON.parse(lastMessage.output as string);
+        // Parseamos la salida del backend
+        const data: { INPUT?: BackendRule[]; OUTPUT?: BackendRule[] } =
+          JSON.parse(lastMessage.output as string);
 
-        const makeRule = (num: string | number, description: string): TableRule => ({
+        // Mapear BackendRule -> TableRule (Rule del frontend)
+        const mapRule = (r: BackendRule): TableRule => ({
           id: crypto.randomUUID(),
-          num: String(num),
-          description,
-          active: true,
-          createdAt: new Date(),
+          num: String(r.num),
+          direction: r.direction,
+          action: r.action,
+          from: r.from,
+          to: r.to,
+          port: r.port ?? undefined,
+          service: r.service ?? "",
+          protocol: r.protocol,
+          active: r.active,
         });
 
-        setRulesInput((data.INPUT ?? []).map(r => makeRule(r.num, r.description)));
-        setRulesOutput((data.OUTPUT ?? []).map(r => makeRule(r.num, r.description)));
+        setRulesInput((data.INPUT ?? []).map(mapRule));
+        setRulesOutput((data.OUTPUT ?? []).map(mapRule));
 
       } catch (error) {
         console.error("Error parsing iptables rules JSON", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo procesar la respuesta del servidor",
+        });
       }
     }
   }, [lastMessage]);
 
+
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-extrabold mb-8 text-gray-900">
-        Ver reglas de iptables
+        Ver reglas
       </h1>
       <p className="mb-8 text-gray-700">
-        Las reglas iptables se aplican en orden numérico. Aquí están separadas por tipo de cadena.
+        Las reglas iptables se aplican en orden numérico.
       </p>
 
       {/* Tabla INPUT */}
