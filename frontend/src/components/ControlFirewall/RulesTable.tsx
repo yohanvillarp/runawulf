@@ -9,10 +9,16 @@ import type { ColumnDef } from "@tanstack/react-table";
 export type Rule = {
   id: string;
   num: string;
-  description: string;
+  direction: "Entrada" | "Salida";
+  action: "Permitir" | "Denegar" | "Rechazar";
+  from: string;
+  to: string;
+  port?: number;
+  service?: string;
+  protocol: string;
   active: boolean;
-  createdAt: Date;
 };
+
 
 type Props = {
   data: Rule[];
@@ -29,14 +35,39 @@ export default function RulesTable({
 }: Props) {
   const columns: ColumnDef<Rule>[] = [
     {
-      accessorKey: "id",
+      accessorKey: "num",
       header: "#",
-      cell: (info) => info.row.index + 1,
+      cell: (info) => info.getValue(),
     },
     {
-      accessorKey: "description",
-      header: "Descripción",
-      cell: (info) => info.getValue(),
+      accessorKey: "action",
+      header: "Acción",
+    },
+    {
+      accessorKey: "direction",
+      header: "Dirección",
+    },
+    {
+      accessorKey: "from",
+      header: "Origen",
+    },
+    {
+      accessorKey: "to",
+      header: "Destino",
+    },
+    {
+      accessorKey: "port",
+      header: "Puerto",
+      cell: (info) => info.getValue() ?? "-", // Si no hay puerto
+    },
+    {
+      accessorKey: "service",
+      header: "Servicio",
+      cell: (info) => info.getValue() ?? "-", // Si no hay servicio
+    },
+    {
+      accessorKey: "protocol",
+      header: "Protocolo",
     },
     {
       accessorKey: "active",
@@ -52,20 +83,14 @@ export default function RulesTable({
               className="form-checkbox h-5 w-5 text-blue-600"
             />
             <span
-              className={`ml-2 font-semibold ${
-                rule.active ? "text-green-600" : "text-red-600"
-              }`}
+              className={`ml-2 font-semibold ${rule.active ? "text-green-600" : "text-red-600"
+                }`}
             >
               {rule.active ? "Activa" : "Inactiva"}
             </span>
           </label>
         );
       },
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Fecha creación",
-      cell: (info) => new Date(info.getValue() as string).toLocaleString(),
     },
     {
       id: "actions",
@@ -109,6 +134,7 @@ export default function RulesTable({
       },
     },
   ];
+
 
   const table = useReactTable({
     data,

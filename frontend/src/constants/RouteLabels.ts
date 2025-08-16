@@ -7,6 +7,7 @@ const routeLabels: Record<string, string> = {
 
   'firewall-control': 'Control de Firewall',
   'create-rule': 'Creación de Regla',
+  'view-rules': 'Ver Reglas',
 
   'intrusion-detection': 'Detección de intrusos',
 

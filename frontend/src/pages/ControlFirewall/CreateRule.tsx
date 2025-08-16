@@ -1,8 +1,6 @@
 import Dropdown from "../../components/Dropdown";
 import Title from "../../components/Title";
 import { useState, useEffect } from "react";
-import { useWebSocket } from "../../context/useWebSocket";
-import { WEBSOCKET_MESSAGE_TYPES } from "../../constants/webSocketTypes";
 import Swal from 'sweetalert2';
 import PortServicePanel from "../../components/ControlFirewall/PortServicePanel";
 import { DIRECTIONS, ACTIONS, SELECT_TYPES, PROTOCOLS } from "../../constants/ruleOptions";
@@ -30,8 +28,6 @@ export default function CreateRule() {
       : PROTOCOLS;
   };
 
-  const { socket, lastMessage } = useWebSocket();
-
   const [interfaces, setInterfaces] = useState([""]);
 
   const ip = localStorage.getItem('ipServer');
@@ -52,40 +48,12 @@ export default function CreateRule() {
     fetchInterfaces();
   }, [ip]);
 
-
-  useEffect(() => {
-    if (!lastMessage) return;
-
-    if (lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT) {
-      if (lastMessage.script === "iptables_rules.sh") {
-        Swal.fire({
-          title: `Prueba exitosa`,
-          text: `Regla ejecutada: ${lastMessage.output}`,
-          icon: 'success',
-          confirmButtonText: 'Confirmado',
-          customClass: {
-            confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700',
-          }
-        });
-      }
-    }
-
-    if (lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_ERROR) {
-      alert("Error: " + String(lastMessage.output));
-    }
-  }, [lastMessage]);
-
-
   const getFinalValue = () => {
     return rule.type === "Puerto" ? rule.port : rule.service;
   };
 
-  const handleSubmit = () => {
-    if (!socket) {
-      alert("⚠️ No estás conectado al servidor WebSocket.");
-      return;
-    }
-    // Validación: si protocolo es Auto, se debe especificar puerto o servicio
+  const handleSubmit = async () => {
+    // Validaciones previas
     if (
       rule.protocol === "Auto" &&
       (
@@ -104,21 +72,63 @@ export default function CreateRule() {
       });
       return;
     }
-    socket.send(JSON.stringify({
-      type: "exec-script",
-      payload: {
-        script: "iptables_rules",
-        params: [
-          rule.direction.toLowerCase(),
-          getFinalValue(),
-          rule.from,
-          rule.to,
-          rule.protocol.toLowerCase(),
-          rule.action.toLowerCase(),
-        ],
-      },
-    }));
-  }
+
+    try {
+      const res = await fetch(`http://${ip}:4000/api/system/create/thing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          thing: "iptables_rules",
+          params: [
+            rule.direction.toLowerCase(),
+            getFinalValue(),
+            rule.from,
+            rule.to,
+            rule.protocol.toLowerCase(),
+            rule.action.toLowerCase(),
+          ],
+        }),
+      });
+
+      if (!res.ok) throw new Error("Error ejecutando script");
+
+      const data = await res.json();
+      console.log(data);
+      if (data.status === "duplicated") {
+        Swal.fire({
+          title: `Regla duplicada`,
+          text: `La regla que intentaste agregar ya existe.`,
+          icon: 'warning',
+          confirmButtonText: 'Entendido',
+          customClass: {
+            confirmButton: 'bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700',
+          }
+        });
+      } else if (data.status === "ok") {
+        Swal.fire({
+          title: `Regla aplicada correctamente`,
+          text: `La regla ${data.output} se ejecutó sin problemas.`,
+          icon: 'success',
+          confirmButtonText: 'Entendido',
+          customClass: {
+            confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700',
+          }
+        });
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Cerrar',
+        customClass: {
+          confirmButton: 'bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700',
+        }
+      });
+    }
+  };
+
 
   useEffect(() => {
     const usingPortOrService = (
