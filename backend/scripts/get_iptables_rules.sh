@@ -18,36 +18,64 @@ translate_protocol() {
   esac
 }
 
+get_service_from_port() {
+  local port=$1
+  local proto=$2
+  # intentando obtener el servicio
+  service=$(grep -E "^[a-zA-Z0-9_-]+\s+$port" /etc/services | awk '{print $1}' | head -n1)
+  echo "$service"
+}
+
 describe_rule() {
   local chain=$1 num=$2 target=$3 prot=$4 in_if=$5 out_if=$6 source=$7 destination=$8 options=$9
 
+  if [[ "$in_if" == "*" ]]; then
+    in_if="todas las interfaces"
+  fi
+
+  if [[ "$out_if" == "*" ]]; then
+    out_if="todas las interfaces"
+  fi
+
+
   local action=$(translate_action "$target")
+  [[ -z "$prot" || "$prot" == "0" ]] && prot="all"  
   local protocol=$(translate_protocol "$prot")
 
   local port=""
+  local service=""
   if [[ "$options" =~ --dport[[:space:]]+([0-9]+) ]]; then
     port=${BASH_REMATCH[1]}
-  elif [[ "$options" =~ dpt:([a-zA-Z0-9_-]+) ]]; then
+  elif [[ "$options" =~ dpt:([0-9]+) ]]; then
     port=${BASH_REMATCH[1]}
   fi
 
-  if [[ "$chain" == "INPUT" ]]; then
-    [[ "$source" == "anywhere" ]] && source="cualquier IP"
-    [[ "$in_if" == "any" ]] && in_if="todas las interfaces"
-    description="$action el tráfico de entrada desde la IP $source hacia la interfaz $in_if"
-  elif [[ "$chain" == "OUTPUT" ]]; then
-    [[ "$out_if" == "any" ]] && out_if="todas las interfaces"
-    [[ "$destination" == "anywhere" ]] && destination="cualquier IP"
-    description="$action el tráfico de salida desde la interfaz $out_if hacia la IP $destination"
-  else
-    description="$action regla en cadena $chain"
+  if [[ -n "$port" ]]; then
+    service=$(get_service_from_port "$port" "${prot,,}")  # Convertir a minúscula
   fi
 
-  [[ -n "$port" ]] && description+=" mediante el puerto/servicio $port"
-  [[ "$protocol" != "Todos" && -n "$protocol" ]] && description+=" utilizando el protocolo $protocol"
-  description+="."
+  # Tipo según si se resolvió servicio o solo puerto
+  local type="Puerto"
+  [[ -n "$service" ]] && type="Servicio"
 
-  echo "$num|$description"
+  # Normalizar interfaces y direcciones
+  [[ "$chain" == "INPUT" ]] && [[ "$source" == "0.0.0.0/0" ]] && source="cualquier IP"
+  [[ "$chain" == "OUTPUT" ]] && [[ "$destination" == "0.0.0.0/0" ]] && destination="cualquier IP"
+
+  # Estado activo siempre true
+  local active=true
+
+  # Determinar el destino según la cadena
+  local to=""
+  if [[ "$chain" == "INPUT" ]]; then
+    to="$in_if"   # interfaz local
+  else
+    to="$destination" 
+    source="$out_if"
+  fi
+
+  # Generar JSON de la regla
+  echo "{\"num\":\"$num\",\"action\":\"$action\",\"direction\":\"$( [[ $chain == INPUT ]] && echo Entrada || echo Salida )\",\"from\":\"$source\",\"to\":\"$to\",\"port\":${port:-null},\"service\":\"${service:-}\" ,\"protocol\":\"$protocol\",\"active\":$active}"
 }
 
 chains=("INPUT" "OUTPUT")
@@ -76,18 +104,17 @@ for chain in "${chains[@]}"; do
     destination=$(echo "$line" | awk '{print $10}')
     options=$(echo "$line" | cut -d ' ' -f 11-)
 
-    desc_line=$(describe_rule "$chain" "$num" "$target" "$prot" "$in_if" "$out_if" "$source" "$destination" "$options")
+    case "$prot" in
+      0) prot="all" ;;
+      6) prot="tcp" ;;
+      17) prot="udp" ;;
+    esac
 
-    num_rule="${desc_line%%|*}"
-    description="${desc_line#*|}"
 
-    # Escapar comillas dobles para JSON
-    description=$(echo "$description" | sed 's/"/\\"/g')
+    rule_json=$(describe_rule "$chain" "$num" "$target" "$prot" "$in_if" "$out_if" "$source" "$destination" "$options")
 
-    if [[ "$first_rule" == false ]]; then
-      output+=","
-    fi
-    output+="{\"num\":$num_rule,\"description\":\"$description\"}"
+    [[ "$first_rule" == false ]] && output+=","
+    output+="$rule_json"
     first_rule=false
   done <<< "$rules"
 
