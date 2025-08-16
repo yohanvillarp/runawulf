@@ -12,6 +12,7 @@ import RedirectIfConfigured from '../components/RedirectIfConfigured'
 import SystemMonitor from '../pages/SystemMonitor'
 import IntrusionDetection from '../pages/IntrusionDetection'
 import ViewRules from '../pages/ControlFirewall/ViewRules'
+import Backup from '../pages/Backup/Backup'
 
 function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ function AppRoutes() {
 
             <Route path="/system-monitor" element={<SystemMonitor />} />
             <Route path="/intrusion-detection" element={<IntrusionDetection />} />
+            <Route path="/backup" element={<Backup />} />
           </Route>
         </Route>
 

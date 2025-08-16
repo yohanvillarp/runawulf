@@ -17,6 +17,9 @@ import {
   Legend,
 } from "recharts";
 import { Bell, CheckCircle, Info, AlertCircle, X } from "lucide-react";
+import { useEffect } from "react";
+import { useWebSocket } from "../context/useWebSocket";
+import { WEBSOCKET_MESSAGE_TYPES } from "../constants/webSocketTypes";
 
 const colors = {
   blue: "#0ea5e9",
@@ -90,9 +93,8 @@ const ResourcePieChart = ({
         </ResponsiveContainer>
       </div>
       <p
-        className={`mt-5 font-semibold text-lg ${
-          alert ? "text-red-600" : "text-sky-700"
-        }`}
+        className={`mt-5 font-semibold text-lg ${alert ? "text-red-600" : "text-sky-700"
+          }`}
       >
         {used} / {total} {suffix}
       </p>
@@ -124,23 +126,23 @@ const swapData = [
   { time: "12:04", used: 1.8 },
 ];
 
-const mockSystemData = {
-  cpuUsage: 85,
-  ramUsed: 8.1,
-  ramTotal: 10,
-  diskUsed: 210,
-  diskTotal: 256,
-  ipPublica: "190.12.34.56",
-  ipPrivada: "192.168.1.10",
-  hostname: "mi-servidor",
-  os: "Ubuntu 22.04 LTS",
-  uptime: "5 horas 12 minutos",
-};
-
 type Thresholds = {
   cpu: number;
   ram: number;
   disk: number;
+};
+
+type MockSystemData = {
+  cpuUsage: number;
+  ramUsed: number;
+  ramTotal: number;
+  diskUsed: number;
+  diskTotal: number;
+  ipPublica: string;
+  ipPrivada: string;
+  hostname: string;
+  os: string;
+  uptime: string;
 };
 
 const defaultThresholds: Thresholds = {
@@ -150,7 +152,7 @@ const defaultThresholds: Thresholds = {
 };
 
 
-{/* Jugando cn LocalStorage*/}
+{/* Jugando cn LocalStorage*/ }
 const SystemMonitorImproved: React.FC = () => {
   // Guardar y cargar thresholds de localStorage
   const [thresholds, setThresholds] = useState<Thresholds>(() => {
@@ -179,6 +181,53 @@ const SystemMonitorImproved: React.FC = () => {
     }));
   };
 
+  const [mockSystemData, setMockSystemData] = useState<MockSystemData>({
+    cpuUsage: 85,
+    ramUsed: 8.1,
+    ramTotal: 10,
+    diskUsed: 210,
+    diskTotal: 256,
+    ipPublica: "190.12.34.56",
+    ipPrivada: "192.168.1.10",
+    hostname: "mi-servidor",
+    os: "Ubuntu 22.04 LTS",
+    uptime: "5 horas 10 minutos",
+  })
+
+  const { socket, lastMessage } = useWebSocket();
+
+  // solicita datos al backend
+  useEffect(() => {
+    if (!socket) return;
+    socket.send(JSON.stringify({
+      type: "exec-script",
+      payload: {
+        script: "get_system_info",
+      }
+    }))
+  }, [socket])
+
+  // recibe datos del backend cada 5 segundos
+  useEffect(() => {
+    if (!lastMessage) return;
+
+    if (
+      lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT &&
+      lastMessage.script === "get_system_info.sh"
+    ) {
+      // Si output viene en formato string JSON:
+      try {
+        const data = typeof lastMessage.output === "string"
+          ? JSON.parse(lastMessage.output)
+          : lastMessage.output;
+
+        setMockSystemData(data);
+      } catch (error) {
+        console.error("Error parseando output:", error);
+      }
+    }
+  }, [lastMessage]);
+
   // Funcionalidad
   // Agregar notificación (toast + lista)
   const addNotification = (notif: Omit<Notification, "id">) => {
@@ -206,6 +255,8 @@ const SystemMonitorImproved: React.FC = () => {
 
     addNotification({ type: "success", message: "Usuario cambió la configuración de alerta." });
   };
+
+
 
   return (
     <main className="min-h-screen bg-sky-50 p-12 font-sans max-w-7xl mx-auto relative">
@@ -351,16 +402,15 @@ const SystemMonitorImproved: React.FC = () => {
       {/* Toast temporal */}
       {toast && (
         <div
-          className={`fixed top-20 right-5 flex items-center gap-3 px-4 py-3 border-l-4 rounded shadow-md z-60 animate-slide-in ${
-            notificationColors[toast.type]
-          }`}
+          className={`fixed top-20 right-5 flex items-center gap-3 px-4 py-3 border-l-4 rounded shadow-md z-60 animate-slide-in ${notificationColors[toast.type]
+            }`}
         >
           {notificationIcons[toast.type]}
           <span className="font-semibold">{toast.message}</span>
         </div>
       )}
 
-            {/* Modal notificaciones */}
+      {/* Modal notificaciones */}
       {showNotifModal && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-24 z-50"
@@ -390,9 +440,8 @@ const SystemMonitorImproved: React.FC = () => {
                 {notifications.map(({ id, type, message }) => (
                   <li
                     key={id}
-                    className={`flex items-center gap-3 border-l-4 px-4 py-3 rounded shadow-sm ${
-                      notificationColors[type]
-                    }`}
+                    className={`flex items-center gap-3 border-l-4 px-4 py-3 rounded shadow-sm ${notificationColors[type]
+                      }`}
                   >
                     {notificationIcons[type]}
                     <span className="font-semibold">{message}</span>
