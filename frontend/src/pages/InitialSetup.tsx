@@ -1,7 +1,9 @@
 import { Github } from 'lucide-react';
-import { useState} from 'react';
+import { useState } from 'react';
 import { useWebSocket } from '../context/useWebSocket'
-
+import logo from '../assets/runawulf.svg';
+import RunesBackground from '../components/RunasBackground';
+import { Server, User, Lock, Crown } from 'lucide-react';
 
 export default function InitialSetup() {
   const [form, setForm] = useState({ ip: '', user: '', password: '' });
@@ -28,26 +30,26 @@ export default function InitialSetup() {
       //guarda ip y usuario
       localStorage.setItem('ipServer', form.ip);
       localStorage.setItem('userServer', form.user);
-
-      
       connect(form.ip)
     } else {
       setResult(`❌ Error: ${error || 'Credenciales inválidas'}`);
     }
-
     setLoading(false);
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 space-y-6">
-        <FormHeader />
-        <FormFields form={form} handleChange={handleChange} />
-        <SubmitButton loading={loading} />
-        {result && <ResultMessage result={result} />}
-        <FormFooter />
-      </form>
-    </main>
+    <>
+      <RunesBackground />
+      <main className="min-h-screen flex items-center justify-center bg-transparent px-4">
+        <form onSubmit={handleSubmit} className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 space-y-6">
+          <FormHeader />
+          <FormFields form={form} handleChange={handleChange} />
+          <SubmitButton loading={loading} />
+          {result && <ResultMessage result={result} />}
+          <FormFooter />
+        </form>
+      </main>
+    </>
   );
 }
 
@@ -71,7 +73,14 @@ async function verifyAdminCredentials(form: { ip: string; user: string; password
 function FormHeader() {
   return (
     <div className="text-center">
-      <h1 className="text-3xl font-bold text-gray-800">Configuraciones iniciales</h1>
+      <img
+        src={logo}
+        alt="Runawulf logo"
+        className="mx-auto w-20 h-20 mb-2"
+      />
+      <h1 className="text-3xl font-bold text-gray-800">
+        Configuraciones iniciales
+      </h1>
       <p className="mt-2 text-gray-500">
         Bienvenido a <span className="font-semibold text-blue-600">Runawulf</span>, la herramienta de configuración de servidores.
       </p>
@@ -92,52 +101,62 @@ function FormFields({
         Introduce los datos de conexión al servidor para continuar.
       </p>
 
+      {/* Campo IP */}
       <div>
         <label htmlFor="ip" className="block text-sm font-medium text-gray-700 mb-1">
           IP del servidor
         </label>
-        <input
-          type="text"
-          name="ip"
-          id="ip"
-          value={form.ip}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="192.168.0.10"
-          required
-        />
+        <div className="relative">
+          <Server className="absolute left-3 top-2.5 text-gray-400" size={18} />
+          <input
+            type="text"
+            name="ip"
+            id="ip"
+            value={form.ip}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md pl-10 pr-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="192.168.0.10"
+            required
+          />
+        </div>
       </div>
 
       <InfoBox />
 
-      <div className="pt-2 space-y-4">
-        <div>
-          <label htmlFor="user" className="block text-sm font-medium text-gray-700 mb-1">
-            Usuario de conexión
-          </label>
+      {/* Campo Usuario */}
+      <div className="pt-2">
+        <label htmlFor="user" className="block text-sm font-medium text-gray-700 mb-1">
+          Usuario de conexión
+        </label>
+        <div className="relative">
+          <User className="absolute left-3 top-2.5 text-gray-400" size={18} />
           <input
             type="text"
             name="user"
             id="user"
             value={form.user}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-md pl-10 pr-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="root"
             required
           />
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Contraseña de conexión
-          </label>
+      {/* Campo Contraseña */}
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          Contraseña de conexión
+        </label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-2.5 text-gray-400" size={18} />
           <input
             type="password"
             name="password"
             id="password"
             value={form.password}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-md pl-10 pr-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
@@ -146,21 +165,33 @@ function FormFields({
   );
 }
 
+
 function InfoBox() {
   return (
-    <div className="bg-gray-100 rounded-lg p-4 space-y-2 text-sm text-gray-700">
-      <p>
-        Se requiere un usuario con permisos <code className="bg-gray-200 px-1 rounded">root</code> para comprobar la conexión.
-      </p>
-      <p>Tu servidor debe permitir acceso remoto.</p>
-      <p>Si usas <code>iptables</code> o <code>ufw</code>, revisa estas guías:</p>
-      <div className="flex gap-2 pt-2">
-        <a href="#" className="text-sm bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 transition">Guía iptables</a>
-        <a href="#" className="text-sm bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 transition">Guía ufw</a>
+    <div className="bg-gray-100 rounded-lg p-4 space-y-3 text-sm text-gray-700">
+      <div className="flex items-center gap-2">
+        <span>
+          Se requiere un usuario con <strong>permisos sudo</strong> para comprobar la conexión.
+          Esto permite ejecutar comandos administrativos sin usar directamente root.
+        </span>
+      </div>
+      <p>Tu servidor debe permitir acceso remoto para este usuario.</p>
+      <p>Si aún no tienes un usuario sudo, sigue esta guía para crearlo:</p>
+      <div className="flex justify-center pt-2">
+        <a
+          href="https://example.com/crear-usuario-sudo"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+        >
+          <Crown size={16} />
+          Usuarios Sudoers
+        </a>
       </div>
     </div>
   );
 }
+
 
 function SubmitButton({ loading }: { loading: boolean }) {
   return (
