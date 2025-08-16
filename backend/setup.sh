@@ -35,6 +35,17 @@ else
 fi
 
 echo
+echo "📦 Instalando paquetes necesarios..."
+echo "-------------------------------------"
+if [ -f scripts/others/download_packages.sh ]; then
+    echo "Ejecutando download_packages.sh..."
+    bash scripts/others/download_packages.sh
+    echo "✅ Instalación de paquetes finalizada."
+else
+    echo "⚠️ Script 'download_packages.sh' no encontrado."
+fi
+
+echo
 echo "✅ Configuración completa."
 echo "=========================="
 echo

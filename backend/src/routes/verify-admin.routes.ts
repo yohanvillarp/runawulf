@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import { exec } from 'child_process'
+import { spawn } from 'child_process'
+import path from 'path'
 
 const router = Router()
 
-// Verificar si el usuario tiene permisos sudo
 router.post('/verify-admin', (req, res) => {
   const { user, password } = req.body
 
@@ -11,24 +11,32 @@ router.post('/verify-admin', (req, res) => {
     return res.status(400).json({ error: 'Usuario o contraseña faltantes' })
   }
 
-  // Intenta ejecutar 'whoami' como el usuario usando sudo
-  const command = `echo '${password}' | sudo -S -u ${user} whoami`
+  const scriptPath = path.resolve('./scripts/validate_user.sh')
+  const bash = spawn('bash', [scriptPath, user])
 
-  exec(command, (err, stdout, stderr) => {
-    if (err || stderr) {
-      console.error('Error:', err || stderr)
+  let stdout = ''
+  let stderr = ''
+
+  // ⬇️ enviamos la contraseña al script, que la leerá con read -r
+  bash.stdin.write(`${password}\n`)
+  bash.stdin.end()
+
+  bash.stdout.on('data', (d) => (stdout += d.toString()))
+  bash.stderr.on('data', (d) => (stderr += d.toString()))
+
+  bash.on('close', (code) => {
+    const result = stdout.trim()
+    console.log('SCRIPT STDOUT:', result)
+    console.log('SCRIPT STDERR:', stderr)
+
+    if (result === 'VALID') {
+      return res.json({ success: true })
+    } else if (result === 'INVALID_USER') {
+      return res.status(404).json({ error: 'Usuario no existe' })
+    } else {
       return res.status(401).json({ error: 'Credenciales inválidas o sin permisos sudo' })
     }
-
-    const result = stdout.trim()
-
-    if (result === user || result === 'root') {
-      return res.json({ success: true })
-    }
-
-    return res.status(403).json({ error: 'No tiene permisos sudo' })
   })
 })
-
 
 export default router
