@@ -11,7 +11,7 @@ router.post('/verify-admin', (req, res) => {
     return res.status(400).json({ error: 'Usuario o contraseña faltantes' })
   }
 
-  const scriptPath = path.resolve('./scripts/validate_user.sh')
+  const scriptPath = path.resolve('./scripts/others/validate_user.sh')
   const bash = spawn('bash', [scriptPath, user])
 
   let stdout = ''

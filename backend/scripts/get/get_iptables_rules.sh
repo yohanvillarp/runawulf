@@ -21,8 +21,10 @@ translate_protocol() {
 get_service_from_port() {
   local port=$1
   local proto=$2
-  # intentando obtener el servicio
-  service=$(grep -E "^[a-zA-Z0-9_-]+\s+$port" /etc/services | awk '{print $1}' | head -n1)
+  proto=$(echo "$proto" | tr '[:upper:]' '[:lower:]')  # normalizar a minúscula
+
+  # Buscar servicio considerando puerto y protocolo
+  service=$(grep -E "^[a-zA-Z0-9_-]+\s+$port/$proto" /etc/services | awk '{print $1}' | head -n1)
   echo "$service"
 }
 

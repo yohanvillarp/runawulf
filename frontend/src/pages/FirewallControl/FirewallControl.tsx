@@ -1,7 +1,7 @@
 import { PencilRuler, ScanEye, History } from "lucide-react";
-import Title from "../components/Title";
-import { ThreeCardPanel } from "../components/ThreeCardPanel";
-import QuickTips from "../components/QuickTips";
+import Title from "../../components/Title";
+import { ThreeCardPanel } from "../../components/ThreeCardPanel";
+import QuickTips from "../../components/QuickTips";
 
 export default function AccessControl() {
   const cards = [
