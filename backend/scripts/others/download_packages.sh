@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Lista de paquetes requeridos
-REQUIRED_PACKAGES=("nmap" "systemd" "iptables" "iptables-persistent")
+REQUIRED_PACKAGES=("nmap" "systemd" "iptables" "iptables-persistent" "curl" "lsb-release")
 
 sudo apt update
 
