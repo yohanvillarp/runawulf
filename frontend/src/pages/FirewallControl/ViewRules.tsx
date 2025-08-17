@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import RulesTable, { type Rule as TableRule } from "../../components/ControlFirewall/RulesTable";
+import RulesTable, { type Rule as TableRule } from "../../components/FirewallControl/RulesTable";
 import { useWebSocket } from "../../context/useWebSocket";
 import { WEBSOCKET_MESSAGE_TYPES } from "../../constants/webSocketTypes";
 import Swal from 'sweetalert2';
@@ -25,6 +25,8 @@ export default function ViewRules() {
   const [rulesInput, setRulesInput] = useState<TableRule[]>([]);
 
   const [rulesOutput, setRulesOutput] = useState<TableRule[]>([]);
+
+  const script = "get/get_iptables_rules.sh";
 
   const handleDelete = async (id: string, chain: "INPUT" | "OUTPUT") => {
     // Encuentra la regla que se va a eliminar
@@ -136,7 +138,7 @@ export default function ViewRules() {
     socket.send(JSON.stringify({
       type: "exec-script",
       payload: {
-        script: "get_iptables_rules",
+        script: script,
       }
     }));
   }, [socket]);
@@ -146,7 +148,7 @@ export default function ViewRules() {
 
     if (
       lastMessage.type === WEBSOCKET_MESSAGE_TYPES.SCRIPT_RESULT &&
-      lastMessage.script === "get_iptables_rules.sh"
+      lastMessage.script === script
     ) {
       try {
         // Parseamos la salida del backend

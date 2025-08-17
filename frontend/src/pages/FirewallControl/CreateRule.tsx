@@ -2,7 +2,7 @@ import Dropdown from "../../components/Dropdown";
 import Title from "../../components/Title";
 import { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
-import PortServicePanel from "../../components/ControlFirewall/PortServicePanel";
+import PortServicePanel from "../../components/FirewallControl/PortServicePanel";
 import { DIRECTIONS, ACTIONS, SELECT_TYPES, PROTOCOLS } from "../../constants/ruleOptions";
 
 export default function CreateRule() {
