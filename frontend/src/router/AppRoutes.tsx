@@ -5,7 +5,7 @@ import InitialSetup from '../pages/InitialSetup'
 import ProtectedRoute from './ProtectecRoute'
 import NotFound from '../pages/NotFound'
 import Setup from '../pages/Setup'
-import AccessControl from '../pages/FirewallControl/FirewallControl'
+import FirewallControl from '../pages/FirewallControl/FirewallControl'
 import DashboardLayout from '../layouts/DashboardLayout'
 import CreateRule from '../pages/FirewallControl/CreateRule'
 import RedirectIfConfigured from '../components/RedirectIfConfigured'
@@ -26,7 +26,7 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/setup" element={<Setup />} />
-            <Route path="/firewall-control" element={<AccessControl />} />
+            <Route path="/firewall-control" element={<FirewallControl />} />
             <Route path="/firewall-control/create-rule" element={<CreateRule />} />
             <Route path="/firewall-control/view-rules" element={<ViewRules />} />
 

@@ -1,13 +1,7 @@
 import React from "react";
+import type { PortServicePanelProps } from "../../types/PortServicePanelProps";
 
-interface Props {
-  type: "Puerto" | "Servicio";
-  port: number;
-  service: string;
-  onChange: (field: "port" | "service", value: string | number) => void;
-}
-
-const PortServicePanel: React.FC<Props> = ({ type, port, service, onChange }) => {
+const PortServicePanel: React.FC<PortServicePanelProps> = ({ type, port, service, onChange }) => {
   if (type === "Puerto") {
     return (
       <input

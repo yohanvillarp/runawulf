@@ -3,7 +3,7 @@ import Title from "../../components/Title";
 import { ThreeCardPanel } from "../../components/ThreeCardPanel";
 import QuickTips from "../../components/QuickTips";
 
-export default function AccessControl() {
+export default function FirewallControl() {
   const cards = [
     {
       title: "Crear reglas",
