@@ -27,7 +27,7 @@ export function handleMessage(ws: WebSocket, message: RawData) {
             handleExecCommand(ws, payload?.command);
             break;
         case 'exec-script':
-            handleExecScript(ws, `${payload?.script}.sh`, payload?.params || []);
+            handleExecScript(ws, payload?.script, payload?.params || []);
             break;
         default:
             ws.send(JSON.stringify({ type: 'error', error: `Tipo desconocido: ${type}` }));
