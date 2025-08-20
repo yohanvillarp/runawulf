@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useWebSocket } from '../context/useWebSocket'
-import Loader from '../components/Loader'
+import Loader from './Loader'
 
 export default function RedirectIfConfigured({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
@@ -25,7 +25,7 @@ export default function RedirectIfConfigured({ children }: { children: React.Rea
   }, [isConnecting, isConnected, isInInitialSetup, isLocalConnected, navigate])
 
   if (isConnecting && isLocalConnected && isInInitialSetup) {
-    return <Loader message="Reconectando con el servidor..." />
+    return <Loader />
   }
 
   // Evita renderizar children hasta que se decida
