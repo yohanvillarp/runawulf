@@ -16,7 +16,7 @@ export const startServer = () => {
     app.use('/api', routes)
 
     app.get('/', (req, res) => {
-        res.send('This is the backend with WebSockets')
+        res.send('This is the backend with http')
     })
 
     const server = http.createServer(app)
