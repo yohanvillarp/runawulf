@@ -4,51 +4,73 @@
 # 🚀 Script de configuración del backend
 # ================================================
 
+# Definición de colores
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
+NC='\033[0m' # No Color
+
 echo
-echo "🔍 Verificando versión de npm..."
+echo -e "${CYAN}🔍 Verificando versión de npm...${NC}"
 echo "--------------------------------"
 npm -v || {
   echo
-  echo "❌ npm no está instalado. Abortando..."
+  echo -e "${RED}npm no está instalado. Abortando...${NC}"
   echo
   exit 1
 }
 
 echo
-echo "🔧 Instalando dependencias del backend..."
+echo -e "${YELLOW}Instalando dependencias del backend...${NC}"
 echo "-----------------------------------------"
 npm install || {
   echo
-  echo "❌ Error al instalar dependencias. Revisa tu conexión o tu archivo package.json."
+  echo -e "${RED}Error al instalar dependencias. Revisa tu conexión o tu archivo package.json.${NC}"
   echo
   exit 1
 }
 
 echo
-echo "🛠️ Otorgando permisos a los scripts..."
+echo -e "${MAGENTA}🛠 Otorgando permisos a los scripts...${NC}"
 echo "-------------------------------------"
-if [ -d scripts ]; then
-  chmod +x scripts/*.sh
-  echo "✅ Permisos asignados a los scripts."
-else
-  echo "⚠️ Carpeta 'scripts' no encontrada, omitiendo permisos."
-fi
+SCRIPTS_DIR="scripts"
 
+if [ -d "$SCRIPTS_DIR" ]; then
+  # Buscar todos los .sh recursivamente
+  sh_files=($(find "$SCRIPTS_DIR" -type f -name "*.sh"))
+  
+  if [ ${#sh_files[@]} -gt 0 ]; then
+    chmod +x "${sh_files[@]}"
+    echo -e "${GREEN}✅ Permisos asignados a todos los scripts.${NC}"
+  else
+    echo -e "${YELLOW}⚠ No hay scripts en la carpeta '$SCRIPTS_DIR'.${NC}"
+  fi
+else
+  echo -e "${YELLOW}⚠ Carpeta '$SCRIPTS_DIR' no encontrada, omitiendo permisos.${NC}"
+fi
 echo
-echo "📦 Instalando paquetes necesarios..."
+echo -e "${CYAN}Instalando paquetes necesarios...${NC}"
 echo "-------------------------------------"
 if [ -f scripts/others/download_packages.sh ]; then
-    echo "Ejecutando download_packages.sh..."
+    echo -e "Ejecutando ${CYAN}download_packages.sh...${NC}"
     bash scripts/others/download_packages.sh
-    echo "✅ Instalación de paquetes finalizada."
+    echo -e "${GREEN}Instalación de paquetes finalizada.${NC}"
 else
-    echo "⚠️ Script 'download_packages.sh' no encontrado."
+    echo -e "${YELLOW}⚠ Script 'download_packages.sh' no encontrado.${NC}"
 fi
 
 echo
-echo "✅ Configuración completa."
+echo -e "${GREEN}Configuración completa. 🎉${NC}"
 echo "=========================="
 echo
-echo -e "\e[1;32m🚀 Ahora puedes ejecutar:\e[0m"
-echo -e "\e[1;32m   npm run dev\e[0m"
+echo -e "${GREEN}🚀 Ahora puedes ejecutar:${NC}"
+echo -e "   ${CYAN}npm run dev${NC}"
+echo
+echo -e "${GREEN}🚀 o convertir en un servicio con:${NC}"
+echo -e "   ${CYAN}/scripts/others/convert_to_daemon.sh${NC}"
+echo
+echo -e "${YELLOW}Recuerde agregar los scripts que requieren permisos a sudoers para que puedan ejecutar comandos sin pedir contraseña.${NC}"
+echo -e "${YELLOW}Por ejemplo, agregue la línea en /etc/sudoers (con visudo):${NC}"
 echo

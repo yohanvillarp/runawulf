@@ -4,7 +4,7 @@ import { handleInstallPackage } from '../handlers/installPackage';
 import { handleExecCommand } from '../handlers/execCommand';
 import { handleExecScript } from '../handlers/execScript';
 
-export function handleMessage(ws: WebSocket, message: RawData) {
+export function handleMessage(ws: WebSocket, message: RawData, live?: boolean) {
     let data;
 
     try {
@@ -27,7 +27,7 @@ export function handleMessage(ws: WebSocket, message: RawData) {
             handleExecCommand(ws, payload?.command);
             break;
         case 'exec-script':
-            handleExecScript(ws, payload?.script, payload?.params || []);
+            handleExecScript(ws, payload?.script, payload?.params || [], live);
             break;
         default:
             ws.send(JSON.stringify({ type: 'error', error: `Tipo desconocido: ${type}` }));
