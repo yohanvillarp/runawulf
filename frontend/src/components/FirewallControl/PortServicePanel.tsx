@@ -13,9 +13,10 @@ const PortServicePanel: React.FC<PortServicePanelProps> = ({ type, port, service
         value={port <= 0 ? "" : port}
         onChange={(e) => {
           const value = e.target.value;
-          onChange("port", value <= "" ? 0 : parseInt(value) || 0);
+          onChange("port", value.trim() === "" ? 0 : parseInt(value, 10));
         }}
       />
+
     );
   }
 

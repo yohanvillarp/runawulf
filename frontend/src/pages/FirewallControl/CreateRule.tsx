@@ -46,20 +46,20 @@ export default function CreateRule() {
         action={rule.action}
         direction={rule.direction}
         onChange={(field, value) => {
-          if(field === "direction"){
+          if (field === "direction") {
             setRule({
               ...rule,
               direction: value as FirewallFormRule["direction"],
               from: "",
               to: "",
             })
-          }else if (field === "action"){
+          } else if (field === "action") {
             setRule({
               ...rule,
               action: value as FirewallFormRule["action"],
             });
-          }else {
-            setRule({ ...rule, [field]: value});
+          } else {
+            setRule({ ...rule, [field]: value });
           }
         }}
       />
@@ -82,19 +82,34 @@ export default function CreateRule() {
           protocol={rule.protocol}
           getProtocolOptions={() => getProtocolOptions()}
           onChange={(field, value) => {
-            if(field === "type"){
-              setRule({
-                ...rule,
+            let updatedRule = { ...rule, [field]: value };
+            // Si el usuario empieza a escribir puerto o servicio => protocolo Auto inmediato
+            if (
+              (field === "port" && value !== 0) ||
+              (field === "service" && String(value).trim() !== "")
+            ) {
+              updatedRule.protocol = "Auto";
+            } else {
+              // Si no hay puerto ni servicio, permitir "Todos"
+              const protocols = getProtocolOptions();
+              if (!protocols.includes(updatedRule.protocol)) {
+                updatedRule.protocol = "Todos";
+              }
+            }
+            // Reset si cambia el tipo (Puerto/Servicio)
+            if (field === "type") {
+              updatedRule = {
+                ...updatedRule,
                 port: 0,
                 service: "",
                 protocol: "Todos",
-              })
-            }else {
-              setRule({ ...rule, [field]: value })}
+              };
             }
-          }
-            
+
+            setRule(updatedRule);
+          }}
         />
+
       </div>
 
       <RulePreviewPanel
