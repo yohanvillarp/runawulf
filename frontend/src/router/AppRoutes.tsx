@@ -14,6 +14,7 @@ import IntrusionDetection from '../pages/IntrusionDetection'
 import DetectionSuricata from '../pages/IntrusionDetection/DetectionSuricata.tsx'
 import ViewRules from '../pages/FirewallControl/ViewRules'
 import Backup from '../pages/Backup/Backup'
+import GuardianEyes from '../pages/IntrusionDetection/GuardianEyes.tsx'
 
 function AppRoutes() {
   return (
@@ -34,6 +35,7 @@ function AppRoutes() {
             <Route path="/system-monitor" element={<SystemMonitor />} />
             <Route path="/intrusion-detection" element={<IntrusionDetection />} />
             <Route path="/intrusion-detection/notificaciones" element={<DetectionSuricata />} />
+            <Route path="/intrusion-detection/guardian-eyes" element={<GuardianEyes />} />
             <Route path="/backup" element={<Backup />} />
           </Route>
         </Route>
