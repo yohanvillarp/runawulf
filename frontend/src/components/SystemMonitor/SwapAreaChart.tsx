@@ -18,7 +18,7 @@ type Props = {
 const SwapAreaChart: React.FC<Props> = ({ data }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-md mx-auto">
-      <h3 className="text-sky-800 font-bold text-xl mb-4">Uso de Swap (GB)</h3>
+      <h3 className="text-sky-800 font-bold text-xl mb-4">Uso Ram(GB)</h3>
       <div style={{ height: 260 }}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
