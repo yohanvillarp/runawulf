@@ -11,6 +11,7 @@ import CreateRule from '../pages/FirewallControl/CreateRule'
 import RedirectIfConfigured from '../components/RedirectIfConfigured'
 import SystemMonitor from '../pages/SystemMonitor/SystemMonitor'
 import IntrusionDetection from '../pages/IntrusionDetection'
+import DetectionSuricata from '../pages/IntrusionDetection/DetectionSuricata.tsx'
 import ViewRules from '../pages/FirewallControl/ViewRules'
 import Backup from '../pages/Backup/Backup'
 
@@ -32,6 +33,7 @@ function AppRoutes() {
 
             <Route path="/system-monitor" element={<SystemMonitor />} />
             <Route path="/intrusion-detection" element={<IntrusionDetection />} />
+            <Route path="/intrusion-detection/notificaciones" element={<DetectionSuricata />} />
             <Route path="/backup" element={<Backup />} />
           </Route>
         </Route>
