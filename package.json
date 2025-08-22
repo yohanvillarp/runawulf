@@ -5,8 +5,8 @@
   "main": "index.js",
   "private": true,
   "workspaces": [
-    "frontend",
-    "backend"
+    "server",
+    "client"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
