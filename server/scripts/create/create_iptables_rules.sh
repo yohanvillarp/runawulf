@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# códigos de salida
+SUCCESS_CODE=0
+GENERIC_ERROR_CODE=1
+DUPLICATE_CODE=2
+
 # Argumentos
 direction=$1                        # INPUT, OUTPUT, FORWARD
 portOrService=$2                   # Puede ser número de puerto o nombre de servicio
@@ -110,9 +115,12 @@ check_duplicate() {
 
 
 if check_duplicate "$direction" "$protocol" "$ipOrigenOrInterfaz" "$ipDestinoOrInterfaz" "$port" "$action"; then
-  echo "DUPLICADA"
+  echo "{\"code\": $DUPLICATE_CODE, \"message\": \"La regla ya existe. Es una regla duplicada.\"}"
+  exit $DUPLICATE_CODE
 else
-  echo "$regla"
   eval "$regla"
+  # Guardar la regla de netfilter
   sudo netfilter-persistent save
+  echo "{\"code\": $SUCCESS_CODE, \"message\": \"La regla ha sido agregada exitosamente.\", \"rule\": \"$regla\"}"
+  exit $SUCCESS_CODE
 fi

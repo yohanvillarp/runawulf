@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
-import path from "path";
-import { exec } from "child_process";
-import { execFile } from "child_process";
 import { ScriptExecutor } from "./ScriptExecutor";
+import ReturnScript from "../types/returnScript";
 
 // maneja las peticiones web
 export class SystemResourceController {
@@ -19,21 +17,8 @@ export class SystemResourceController {
         }
 
         try {
-            const output = await ScriptExecutor.create(thing, params);
-            
-            if (output.includes('DUPLICADA')) {
-                return res.json({
-                    status: 'duplicated',
-                    message: 'Este recurso ya existe'
-                });
-            }
-            
-            // esto es exclusivo de un módulo, se está procediando a adaptarlo
-            /*if( verifyDuplicated) {
-                
-            }
-            */
-
+            const output: ReturnScript = await ScriptExecutor.create(thing, params);
+            // code 0 
             return res.status(201).json({
                 status: 'ok',
                 message: 'El recurso se creó correctamente.',
@@ -41,6 +26,12 @@ export class SystemResourceController {
             })
 
         } catch (error: any) {
+            if (error.code == 2) {
+                return res.json({
+                    status: 'duplicated',
+                    message: 'Este recurso ya existe'
+                });
+            }
             console.error(`Error al crear recurso ${thing}:`, error);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }
@@ -58,7 +49,7 @@ export class SystemResourceController {
         try {
             const output = await ScriptExecutor.delete(thing, params);
             return res.json({
-                output: output.trim()
+                output: output.message.trim()
             })
         } catch (error: any) {
             console.error(`Error al eliminar recurso ${thing}:`, error)
