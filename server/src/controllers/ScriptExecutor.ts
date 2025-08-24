@@ -8,6 +8,7 @@ export class ScriptExecutor {
         return new Promise((resolve, reject) => {
             execFile('sudo', [command, ...args], (error, stdout, stderr) => {
                 if (error) {
+                    console.log("algo malo ocurrio")
                     reject(stderr || error.message);
                 } else {
                     resolve(stdout);

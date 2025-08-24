@@ -35,6 +35,7 @@ export function createWebSocketServer(server: Server) {
     }, interval);
 
     // Script de Suricata en tiempo real, compartido para todos los clientes
+    /*
     const suricataScript = spawn('/bin/bash', [`scripts/${scriptPathSuricata}`]);
 
     suricataScript.stdout.on('data', (data) => {
@@ -65,4 +66,5 @@ export function createWebSocketServer(server: Server) {
     suricataScript.on('close', (code) => {
         console.log(`Script Suricata finalizó con código ${code}`);
     });
+    */
 }
