@@ -9,7 +9,8 @@ export class ScriptExecutor {
         return new Promise((resolve, reject) => {
             execFile('sudo', [command, ...args], (error, stdout, stderr) => {
                 if (error) {
-                    const errorResult = JSON.parse(stderr);
+                    console.log("hay un código de error: "+stdout)
+                    const errorResult = JSON.parse(stdout);
                     reject(errorResult);
                 } else {
                     const result = JSON.parse(stdout);
@@ -35,9 +36,6 @@ export class ScriptExecutor {
     // Método público para ejecutar un script de creación
     public static async create(thing: string, params: string[]): Promise<ReturnScript> {
         const scriptPath = path.join(__dirname, '../../scripts/create', `create_${thing}.sh`);
-        console.log("scriptPath: ", scriptPath)
-        console.log("thing: " , thing)
-        console.log("params: " , params)
         return this.runExecFile(scriptPath, params);
     }
     
