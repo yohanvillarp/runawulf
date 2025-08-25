@@ -1,17 +1,20 @@
 import { exec, execFile } from 'child_process';
 import path from 'path';
+import ReturnScript from '../types/returnScript';
 
 // ejecuta comandos
 export class ScriptExecutor {
     // Método privado para manejar la ejecución de scripts con execFile
-    private static async runExecFile(command: string, args: string[]): Promise<string> {
+    private static async runExecFile(command: string, args: string[]): Promise<ReturnScript> {
         return new Promise((resolve, reject) => {
             execFile('sudo', [command, ...args], (error, stdout, stderr) => {
                 if (error) {
-                    console.log("algo malo ocurrio")
-                    reject(stderr || error.message);
+                    console.log("hay un código de error: "+stdout)
+                    const errorResult = JSON.parse(stdout);
+                    reject(errorResult);
                 } else {
-                    resolve(stdout);
+                    const result = JSON.parse(stdout);
+                    resolve(result);
                 }
             });
         });
@@ -31,13 +34,13 @@ export class ScriptExecutor {
     }
 
     // Método público para ejecutar un script de creación
-    public static async create(thing: string, params: string[]): Promise<string> {
+    public static async create(thing: string, params: string[]): Promise<ReturnScript> {
         const scriptPath = path.join(__dirname, '../../scripts/create', `create_${thing}.sh`);
         return this.runExecFile(scriptPath, params);
     }
     
     // Método público para ejecutar un script de borrado
-    public static async delete(thing: string, params: string[]): Promise<string> {
+    public static async delete(thing: string, params: string[]): Promise<ReturnScript> {
         const scriptPath = path.join(__dirname, '../../scripts/delete', `delete_${thing}.sh`);
         return this.runExecFile(scriptPath, params);
     }
