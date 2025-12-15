@@ -1,69 +1,96 @@
-## 🐺 Runawulf: El Guardián Web para tu Servidor Ubuntu
 
-Runawulf no es solo un conjunto de herramientas, es un **alfabeto rúnico en construcción** diseñado para la **gestión y seguridad de servidores Ubuntu** desde una interfaz web intuitiva.
+-----
 
-Inspirado en el **lobo**, el viajero astuto que no reinventa el camino, sino que domina el terreno, este proyecto busca que **domines tus recursos**, aproveches su poder y protejas tu territorio digital, eliminando la dependencia de la línea de comandos.
+# Runawulf: Ubuntu Server Security & Management GUI
 
----
+  
 
-### ¿Por Qué Runawulf?
+**Runawulf** es una interfaz web basada en WebSockets y HTTPS para la administración en tiempo real de servidores Ubuntu. Permite la gestión gráfica de reglas de firewall (`iptables`), monitoreo de recursos y detección de intrusos (`suricata`) sin depender de la terminal.
 
-Runawulf nació para **eliminar la complejidad** del software libre y de las potentes herramientas de servidor. Proporciona una **Interfaz de Usuario Gráfica (GUI)** amigable que adapta servicios críticos de Linux a un entorno **plug-and-play**, permitiendo que incluso usuarios no técnicos puedan gestionar sus servidores de manera estratégica.
+## 🛠️ Tech Stack
 
----
+  * **Backend:** Node.js, Express, TypeScript.
+  * **Comunicación:** `ws` (WebSockets nativos) para flujo de datos bidireccional en tiempo real y https para ciertos servicios.
+  * **Sistema:** Bash scripts, Linux Kernel Utilities.
+  * **Seguridad:** Integración con Suricata IDS.
 
-### Arquitectura: Comunicación en Tiempo Real
+## 📋 Prerrequisitos
 
-Para lograr un **monitoreo en vivo** y una gestión instantánea, Runawulf utiliza un modelo de **conexión persistente y bidireccional** entre el cliente (el navegador) y el servidor.
+Este proyecto requiere acceso privilegiado al sistema para gestionar redes.
 
-| Componente | Función | Mecanismo |
-| :--- | :--- | :--- |
-| **Backend Core** | Inicia el servidor HTTP (Express) y habilita la comunicación en tiempo real. | `app.ts` |
-| **Conexión** | Administra el canal persistente, acepta clientes y envía mensajes periódicos (ej. métricas del sistema). | **WebSocketServer.ts**  |
-| **Procesamiento** | Interpreta los mensajes del cliente, identifica la acción (`type`) y delega la ejecución de comandos. | **WsMessageHandler.ts**  |
+  * **SO:** Ubuntu 20.04 LTS o superior.
+  * **Dependencias del Sistema:** `suricata` (IDS) e `iptables` (Firewall).
+  * **Node.js:** v18.x o superior.
 
-Este modelo WebSocket permite que el servidor envíe **actualizaciones automáticas de datos** (como métricas del sistema) sin que el cliente las solicite, asegurando una visión estratégica y en tiempo real.
+> ⚠️ **Nota:** Si no tienes Node.js, descarga la última versión desde su [sitio oficial](https://nodejs.org/en/download). **No utilices** los repositorios predeterminados de Ubuntu (`sudo apt install npm`) ya que instalan versiones obsoletas.
 
----
+## 🚀 Instalación y Despliegue
 
-### ᛋ Las Primeras Runas: Los Módulos Actuales
+### 1\. Reconocimiento del entorno
 
-Cada módulo es una **runa**, un pilar fundamental en la estrategia de un verdadero lobo, listo para la caza.
+Este repositorio es un **monorepo** (contiene tanto el cliente como el servidor). Ten en cuenta la diferencia: puedes clonar el repositorio y ejecutar todo en la misma máquina, o acceder a la interfaz web (cliente) desde otro equipo en la misma red.
 
-#### **ᚱ Raido – Monitor de Sistema**
+### 2\. Clonar el repositorio
 
-Raido es la **runa del viaje y el camino**, el rumbo que guía al caminante.
-* **Función:** Proporciona la vigilancia continua del pulso interno del servidor.
-* **Capacidades:** Visualización en tiempo real de **CPU, RAM, Disco** y **Tráfico de Red**. Muestra el estado del servidor (IP, Hostname, OS) y el historial de uso para anticipar desvíos.
+```bash
+git clone git@github.com:yohanvillarp/runawulf.git
+cd runawulf
+```
 
-#### **ᛉ Algiz – Control de Firewall**
+### 3.1. Instalación de dependencias
 
-Algiz es la **runa de la protección y la guardia**, la muralla defensiva de tu servidor.
-* **Función:** Permite la gestión visual de las reglas de `iptables`.
-* **Capacidades:** **Creación de reglas** guiada, definiendo acción (permitir/denegar), dirección (entrante/saliente) e interfaz para reducir errores. Ofrece una **consulta centralizada** de todas las reglas activas con filtros inteligentes.
+Instalamos las dependencias de la interfaz visual y el servidor.
 
-#### **ᛇ Eiwaz – Detección de Intrusos**
+```bash
+npm install
+```
 
-Eiwaz es la **runa del arco de tejo**, un medio de protección.
-* **Función:** Monitoreo activo de red, impulsado por **Suricata** (IDS/IPS de código abierto).
-* **Capacidades:** Rastrea y **geolocaliza IPs de origen** de alertas, detecta amenazas por protocolo y puerto, y procesa *logs* en tiempo real para una respuesta inmediata.
+### 3.2 Ejecución del proyecto (Cliente)
 
-#### **ᛒ Berkano – Copias de Seguridad (Próximamente)**
+Iniciamos la interfaz.
 
-Berkano representa la **regeneración y el crecimiento**. Este módulo, aún en desarrollo, será el refugio al que siempre puedes volver para restaurar tus recursos.
+```bash
+cd client
+npm run dev
+```
 
----
+La interfaz debería iniciar correctamente:
+![Captura de pantalla del inicio de Runawulf](./docs/images/interfaz_runawulf.png)
 
-### Integración y el Sentido de la Manada (Futuro)
+### 4.1 Gestión de permisos (Servidor)
 
-El verdadero poder de Runawulf radica en la **colaboración entre runas**. Estamos trabajando para que estos módulos dejen de ser solo herramientas aisladas y comiencen a **aportar entre ellos**:
+Configuramos los scripts necesarios en el backend.
 
-* **Algiz + Eiwaz:** Que el sistema de **Detección de Intrusos (Eiwaz)** pueda **alimentar automáticamente al Firewall (Algiz)**, creando reglas de bloqueo temporales contra IPs que muestren actividad maliciosa. El lobo guardián (Algiz) actuando por los ojos del rastreador (Eiwaz).
+```bash
+cd server
+chmod +x setup.sh
+./setup.sh
+```
 
----
+### 4.2 Ejecución del proyecto (Servidor)
 
-### ¡Únete a la Manada!
+Debido a que la conversión a servicio de sistema aún es experimental, ejecuta el servidor manualmente:
 
-Runawulf no promete un destino final, sino un punto de partida para que domines el poder que has dejado pasar.
+```bash
+npm run dev
+```
 
-* **Repositorio del proyecto:** `https://github.com/yohanvillarp/runawulf`
+Deberías ver la confirmación de ejecución:
+![Captura de pantalla del mensaje de confirmación del servidor](./docs/images/ejecucion_server_runawulf.png)
+
+### 5\. Ingreso a la interfaz
+
+Para conectar la interfaz con el servidor, necesitas la dirección IP. Si estás en la misma máquina usa `127.0.0.1` (localhost), caso contrario, consulta tu IP con:
+
+```bash
+ip a
+```
+
+
+
+Ingresa esa IP en la pantalla de bienvenida:
+![Captura de pantalla de la conexión del servidor con la interfaz](./docs/images/primera_ejecucion.png)
+
+### 6. Experimenta
+Todo listo, prueba los modulos (aún no todos están terminados)
+![Captura de pantalla del inicio de Runawulf](./docs/images/Dashboard_runawulf.png)
