@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { useWebSocket } from '../context/useWebSocket'
+import { useWebSocket } from '@/shared/hooks/useWebSocket'
 import Loader from '../shared/components/Loader'
 
 const ProtectedRoute =() => {  

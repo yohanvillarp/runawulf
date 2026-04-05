@@ -1,8 +1,8 @@
 import { Github } from 'lucide-react';
 import { useState } from 'react';
-import { useWebSocket } from '../context/useWebSocket'
-import logo from '../assets/runawulf.svg';
-import RunesBackground from '../shared/components/RunasBackground';
+import { useWebSocket } from '@/shared/hooks/useWebSocket'
+import logo from '@/assets/runawulf.svg';
+import RunesBackground from '@/shared/components/RunasBackground';
 import { Server, User, Lock, Crown } from 'lucide-react';
 
 export default function InitialSetup() {

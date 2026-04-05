@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useWebSocket } from '../../context/useWebSocket'
+import { useWebSocket } from '@/shared/hooks/useWebSocket'
 import Loader from './Loader'
 
 export default function RedirectIfConfigured({ children }: { children: React.ReactNode }) {

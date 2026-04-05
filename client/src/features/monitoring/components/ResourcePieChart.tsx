@@ -1,10 +1,4 @@
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { colors } from "../constants/colors";
 
 export const ResourcePieChart = ({
@@ -42,16 +36,21 @@ export const ResourcePieChart = ({
               <Cell fill={colors.lightBlue} />
             </Pie>
             <Tooltip
-              formatter={(val: number) =>
-                suffix === "%" ? `${val}%` : `${val} ${suffix}`
+              formatter={(val) =>
+                typeof val === "number"
+                  ? suffix === "%"
+                    ? `${val}%`
+                    : `${val} ${suffix}`
+                  : ""
               }
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
       <p
-        className={`mt-5 font-semibold text-lg ${alert ? "text-red-600" : "text-sky-700"
-          }`}
+        className={`mt-5 font-semibold text-lg ${
+          alert ? "text-red-600" : "text-sky-700"
+        }`}
       >
         {used} / {total} {suffix}
       </p>

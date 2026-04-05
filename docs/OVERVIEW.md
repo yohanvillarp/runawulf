@@ -1,69 +1,124 @@
-## 🐺 Runawulf: El Guardián Web para tu Servidor Ubuntu
+# Runawulf — Visión General
 
-Runawulf no es solo un conjunto de herramientas, es un **alfabeto rúnico en construcción** diseñado para la **gestión y seguridad de servidores Ubuntu** desde una interfaz web intuitiva.
+## Qué es Runawulf
 
-Inspirado en el **lobo**, el viajero astuto que no reinventa el camino, sino que domina el terreno, este proyecto busca que **domines tus recursos**, aproveches su poder y protejas tu territorio digital, eliminando la dependencia de la línea de comandos.
+Runawulf es una plataforma web para la administración y seguridad de servidores Ubuntu. Su propósito es exponer servicios críticos del sistema operativo a través de interfaces visuales dinámicas, sin depender de la terminal.
 
----
-
-### ¿Por Qué Runawulf?
-
-Runawulf nació para **eliminar la complejidad** del software libre y de las potentes herramientas de servidor. Proporciona una **Interfaz de Usuario Gráfica (GUI)** amigable que adapta servicios críticos de Linux a un entorno **plug-and-play**, permitiendo que incluso usuarios no técnicos puedan gestionar sus servidores de manera estratégica.
+El nombre combina dos ideas: las runas nórdicas, como símbolos de conocimiento y poder sobre el entorno, y el lobo, que no reinventa el camino sino que domina el terreno que ya existe. Runawulf no reemplaza las herramientas de Linux las hace accesibles.
 
 ---
 
-### Arquitectura: Comunicación en Tiempo Real
+## El Problema que Resuelve
 
-Para lograr un **monitoreo en vivo** y una gestión instantánea, Runawulf utiliza un modelo de **conexión persistente y bidireccional** entre el cliente (el navegador) y el servidor.
+Las herramientas de administración de servidores Linux son poderosas, pero su curva de aprendizaje es alta y su interfaz es exclusivamente la terminal. Esto crea una barrera real para estudiantes, desarrolladores y equipos que no tienen experiencia profunda en administración de sistemas pero que necesitan gestionar servidores de forma segura y estratégica.
 
-| Componente | Función | Mecanismo |
-| :--- | :--- | :--- |
-| **Backend Core** | Inicia el servidor HTTP (Express) y habilita la comunicación en tiempo real. | `app.ts` |
-| **Conexión** | Administra el canal persistente, acepta clientes y envía mensajes periódicos (ej. métricas del sistema). | **WebSocketServer.ts**  |
-| **Procesamiento** | Interpreta los mensajes del cliente, identifica la acción (`type`) y delega la ejecución de comandos. | **WsMessageHandler.ts**  |
-
-Este modelo WebSocket permite que el servidor envíe **actualizaciones automáticas de datos** (como métricas del sistema) sin que el cliente las solicite, asegurando una visión estratégica y en tiempo real.
+Runawulf elimina esa barrera sin sacrificar el control. El usuario ve lo que hace el sistema, entiende qué comando se ejecuta y por qué, y puede actuar sin memorizar sintaxis.
 
 ---
 
-### ᛋ Las Primeras Runas: Los Módulos Actuales
+## La Idea Central: Come tu Propio Alimento
 
-Cada módulo es una **runa**, un pilar fundamental en la estrategia de un verdadero lobo, listo para la caza.
+El principio que guía la arquitectura de Runawulf es simple: los módulos oficiales del sistema están construidos con el mismo motor que se le entrega al usuario para construir los suyos.
 
-#### **ᚱ Raido – Monitor de Sistema**
+No hay dos sistemas separados. Hay un motor que conecta interfaces visuales con servicios de Linux, y sobre ese motor se construyen tanto los módulos robustos y mantenidos del proyecto como los módulos personalizados que cada usuario puede diseñar.
 
-Raido es la **runa del viaje y el camino**, el rumbo que guía al caminante.
-* **Función:** Proporciona la vigilancia continua del pulso interno del servidor.
-* **Capacidades:** Visualización en tiempo real de **CPU, RAM, Disco** y **Tráfico de Red**. Muestra el estado del servidor (IP, Hostname, OS) y el historial de uso para anticipar desvíos.
+Esto tiene una consecuencia directa: si el motor es capaz de producir Algiz, Raido y Eiwaz, el usuario tiene evidencia concreta de lo que puede construir con él.
 
-#### **ᛉ Algiz – Control de Firewall**
-
-Algiz es la **runa de la protección y la guardia**, la muralla defensiva de tu servidor.
-* **Función:** Permite la gestión visual de las reglas de `iptables`.
-* **Capacidades:** **Creación de reglas** guiada, definiendo acción (permitir/denegar), dirección (entrante/saliente) e interfaz para reducir errores. Ofrece una **consulta centralizada** de todas las reglas activas con filtros inteligentes.
-
-#### **ᛇ Eiwaz – Detección de Intrusos**
-
-Eiwaz es la **runa del arco de tejo**, un medio de protección.
-* **Función:** Monitoreo activo de red, impulsado por **Suricata** (IDS/IPS de código abierto).
-* **Capacidades:** Rastrea y **geolocaliza IPs de origen** de alertas, detecta amenazas por protocolo y puerto, y procesa *logs* en tiempo real para una respuesta inmediata.
-
-#### **ᛒ Berkano – Copias de Seguridad (Próximamente)**
-
-Berkano representa la **regeneración y el crecimiento**. Este módulo, aún en desarrollo, será el refugio al que siempre puedes volver para restaurar tus recursos.
+La referencia más cercana es el editor de niveles de Geometry Dash: el creador usa el mismo constructor para diseñar los niveles oficiales que el que le entrega a la comunidad. Los niveles oficiales no son una promesa, son una demostración.
 
 ---
 
-### Integración y el Sentido de la Manada (Futuro)
+## Arquitectura
 
-El verdadero poder de Runawulf radica en la **colaboración entre runas**. Estamos trabajando para que estos módulos dejen de ser solo herramientas aisladas y comiencen a **aportar entre ellos**:
+Runawulf es un monorepo compuesto por dos proyectos independientes que se comunican en tiempo real.
 
-* **Algiz + Eiwaz:** Que el sistema de **Detección de Intrusos (Eiwaz)** pueda **alimentar automáticamente al Firewall (Algiz)**, creando reglas de bloqueo temporales contra IPs que muestren actividad maliciosa. El lobo guardián (Algiz) actuando por los ojos del rastreador (Eiwaz).
+### Cliente
+
+Interfaz web construida en React con TypeScript. Sigue la metodología Feature-Sliced Design (FSD), que organiza el código por dominio funcional en lugar de por tipo de archivo. Esto permite que cada módulo —firewall, monitoreo, detección de intrusos— sea autónomo y extensible sin afectar al resto.
+
+```
+client/src/
+├── app/          — providers globales, configuración de la aplicación
+├── pages/        — vistas enrutadas
+├── widgets/      — composiciones de layout reutilizables
+├── features/     — módulos funcionales (firewall, monitoring, intrusion)
+├── shared/       — componentes, hooks, utilidades y tipos compartidos
+└── assets/       — recursos estáticos
+```
+
+### Servidor
+
+Backend en Node.js con Express y TypeScript. Gestiona dos canales de comunicación:
+
+- HTTP/HTTPS para operaciones puntuales y configuración inicial.
+- WebSockets nativos (`ws`) para el flujo bidireccional de datos en tiempo real.
+
+El servidor actúa como intermediario entre la interfaz web y el sistema operativo. Recibe mensajes del cliente, identifica la acción solicitada y ejecuta los comandos o scripts correspondientes con los permisos necesarios.
+
+### Comunicación
+
+| Componente | Responsabilidad |
+| :--- | :--- |
+| `app.ts` | Inicializa Express y habilita el servidor WebSocket |
+| `WebSocketServer.ts` | Gestiona conexiones, envía actualizaciones periódicas al cliente |
+| `WsMessageHandler.ts` | Interpreta mensajes entrantes y delega la ejecución |
 
 ---
 
-### ¡Únete a la Manada!
+## Los Módulos Actuales
 
-Runawulf no promete un destino final, sino un punto de partida para que domines el poder que has dejado pasar.
+Cada módulo representa un dominio de administración del servidor. En la nomenclatura interna del proyecto, cada uno lleva el nombre de una runa nórdica que refleja su función.
 
-* **Repositorio del proyecto:** `https://github.com/yohanvillarp/runawulf`
+### Raido — Monitor de Sistema
+
+Raido es la runa del viaje y el movimiento. Este módulo proporciona visibilidad continua sobre el estado interno del servidor: uso de CPU, memoria RAM, disco y tráfico de red. Incluye historial de métricas para identificar tendencias y anticipar problemas antes de que ocurran.
+
+### Algiz — Control de Firewall
+
+Algiz es la runa de la protección. Este módulo expone la gestión de reglas `iptables` a través de una interfaz guiada. Permite crear reglas definiendo acción, dirección e interfaz, y consultar todas las reglas activas con filtros. El objetivo es reducir los errores de configuración que en un entorno de terminal son silenciosos y potencialmente críticos.
+
+### Eiwaz — Detección de Intrusos
+
+Eiwaz es la runa del arco de tejo, símbolo de defensa a distancia. Este módulo integra Suricata, el sistema de detección y prevención de intrusos de código abierto, y presenta sus alertas en tiempo real. Rastrea IPs de origen, clasifica amenazas por protocolo y puerto, y procesa los logs del IDS para una respuesta inmediata.
+
+---
+
+## Integración entre Módulos
+
+El siguiente paso natural en la evolución de Runawulf es que los módulos dejen de operar de forma aislada y comiencen a colaborar.
+
+El caso más claro es la integración entre Eiwaz y Algiz: cuando el sistema de detección de intrusos identifica una IP con comportamiento malicioso, debería poder instruir al firewall para crear una regla de bloqueo temporal de forma automática. El rastreador y el guardián actuando como una unidad.
+
+Esta integración entre módulos es también la base del constructor: un sistema que permite definir qué servicio consume un módulo, qué datos expone y cómo reacciona ante eventos de otros módulos.
+
+---
+
+## Stack Tecnológico
+
+| Capa | Tecnología |
+| :--- | :--- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS |
+| Backend | Node.js, Express 5, TypeScript |
+| Comunicación | WebSockets nativos (`ws`) |
+| Gestión de paquetes | pnpm (workspaces) |
+| Sistema | Ubuntu 20.04 LTS o superior |
+| Seguridad | Suricata IDS, iptables |
+| Scripts | Bash, utilidades del kernel de Linux |
+
+---
+
+## Estado del Proyecto
+
+Runawulf está en refactorización activa. La base funcional existe: los módulos de monitoreo, firewall y detección de intrusos operan y se comunican con el servidor en tiempo real. El trabajo actual se enfoca en estabilizar la arquitectura del cliente bajo FSD, mejorar la gestión del ciclo de vida de las conexiones WebSocket para reducir el consumo de recursos, y sentar las bases del sistema de construcción de módulos personalizados.
+
+Este documento refleja el estado en la rama `develop`. La rama `main` contiene la última versión estable publicada.
+
+---
+
+## Para Desarrolladores y Estudiantes
+
+Runawulf está pensado para quienes quieren entender cómo funciona un servidor Linux sin que la terminal sea el único punto de entrada. Si estás aprendiendo administración de sistemas, cada módulo es una ventana a una herramienta real: no simula iptables, lo ejecuta. No simula Suricata, lo lee.
+
+El código está estructurado para ser legible y extensible. Las contribuciones, preguntas y propuestas de nuevos módulos son bienvenidas.
+
+Repositorio: `https://github.com/yohanvillarp/runawulf`

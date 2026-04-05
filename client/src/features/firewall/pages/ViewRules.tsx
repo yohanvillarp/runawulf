@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import RulesTable, { type Rule as TableRule } from "../components/RulesTable";
-import { useWebSocket } from "../../../context/useWebSocket";
-import { WEBSOCKET_MESSAGE_TYPES } from "../../../shared/constants/webSocketTypes";
+import { useWebSocket } from '@/shared/hooks/useWebSocket';
+import { WEBSOCKET_MESSAGE_TYPES } from "@/shared/constants/webSocketTypes";
 import Swal from 'sweetalert2';
 
 type BackendRule = {

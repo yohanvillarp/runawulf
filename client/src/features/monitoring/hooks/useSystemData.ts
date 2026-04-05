@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useWebSocket } from "../../../context/useWebSocket";
-import { WEBSOCKET_MESSAGE_TYPES } from "../../../shared/constants/webSocketTypes";
+import { useWebSocket } from "@/shared/hooks/useWebSocket";
+import { WEBSOCKET_MESSAGE_TYPES } from "@/shared/constants/webSocketTypes";
 import type { MockSystemData } from "../types/MockSystemData";
 
 // Este objeto asegura que el estado inicial siempre tenga todas las propiedades necesarias

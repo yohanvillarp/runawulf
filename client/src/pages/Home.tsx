@@ -1,7 +1,7 @@
 import { ModuleCard } from '../shared/components/ModuleCard'
 import { Cpu, Settings, LogOut, Clock, Key, Database, Shield, HelpCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useWebSocket } from '../context/useWebSocket'
+import { useWebSocket } from '@/shared/hooks/useWebSocket'
 
 export default function Home() {
 

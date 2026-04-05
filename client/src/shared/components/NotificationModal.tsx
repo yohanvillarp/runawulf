@@ -1,6 +1,6 @@
 import React from "react";
 import { X, Info, CheckCircle, AlertCircle } from "lucide-react";
-import type { Notification } from "../../modules/Eiwaz/types/Notification";
+import type { Notification } from '@/features/intrusion/types/Notification';
 
 const notificationIcons = {
   info: <Info className="w-6 h-6 text-blue-600" />,

@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect } from 'react'
-import { WebSocketContext } from './WebSocketContext'
-import type { ServerMessage } from './WebSocketContext'
+import { WebSocketContext } from '@/shared/api/WebSocketContext'
+import type { ServerMessage } from '@/shared/api/WebSocketContext'
 import Swal from 'sweetalert2'
-import { WEBSOCKET_CONNECTION_TIMEOUT_MS } from '../shared/constants/timeouts'
+import { WEBSOCKET_CONNECTION_TIMEOUT_MS } from '@/shared/constants/timeouts'
 
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const socketRef = useRef<WebSocket | null>(null)

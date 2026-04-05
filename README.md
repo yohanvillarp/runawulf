@@ -1,65 +1,96 @@
+# Runawulf
 
------
+Runawulf es una interfaz web para la administración y seguridad de servidores Ubuntu. Permite gestionar reglas de firewall, monitorear recursos del sistema y detectar intrusos en tiempo real, sin depender de la terminal.
 
-# Runawulf: Ubuntu Server Security & Management GUI
+La comunicación entre la interfaz y el servidor ocurre a través de WebSockets, lo que permite que los datos fluyan de forma continua y bidireccional sin necesidad de recargar la página.
 
-  
+> Este repositorio corresponde a la versión 1.0.0 del proyecto. La arquitectura y los módulos están funcionales. Consulta la rama `develop` para ver el trabajo en curso.
 
-**Runawulf** es una interfaz web basada en WebSockets y HTTPS para la administración en tiempo real de servidores Ubuntu. Permite la gestión gráfica de reglas de firewall (`iptables`), monitoreo de recursos y detección de intrusos (`suricata`) sin depender de la terminal.
+---
 
-## 🛠️ Tech Stack
+## Modulos disponibles
 
-  * **Backend:** Node.js, Express, TypeScript.
-  * **Comunicación:** `ws` (WebSockets nativos) para flujo de datos bidireccional en tiempo real y https para ciertos servicios.
-  * **Sistema:** Bash scripts, Linux Kernel Utilities.
-  * **Seguridad:** Integración con Suricata IDS.
+| Modulo | Runa | Estado |
+| :--- | :--- | :--- |
+| Monitor de Sistema | Raido | Disponible |
+| Control de Firewall | Algiz | Disponible |
+| Deteccion de Intrusos | Eiwaz | Disponible |
+| Copias de Seguridad | Berkano | En desarrollo |
 
-## 📋 Prerrequisitos
+---
 
-Este proyecto requiere acceso privilegiado al sistema para gestionar redes.
+## Stack
 
-  * **SO:** Ubuntu 20.04 LTS o superior.
-  * **Dependencias del Sistema:** `suricata` (IDS) e `iptables` (Firewall).
-  * **Node.js:** v18.x o superior.
+- Frontend: React 19, TypeScript, Vite, Tailwind CSS
+- Backend: Node.js, Express 5, TypeScript
+- Comunicacion: WebSockets nativos (`ws`)
+- Gestion de paquetes: pnpm
+- Sistema: Ubuntu 20.04 LTS o superior
+- Seguridad: Suricata IDS, iptables
 
-> ⚠️ **Nota:** Si no tienes Node.js, descarga la última versión desde su [sitio oficial](https://nodejs.org/en/download). **No utilices** los repositorios predeterminados de Ubuntu (`sudo apt install npm`) ya que instalan versiones obsoletas.
+---
 
-## 🚀 Instalación y Despliegue
+## Prerequisitos
 
-### 1\. Reconocimiento del entorno
+Este proyecto requiere acceso privilegiado al sistema para gestionar redes y servicios.
 
-Este repositorio es un **monorepo** (contiene tanto el cliente como el servidor). Ten en cuenta la diferencia: puedes clonar el repositorio y ejecutar todo en la misma máquina, o acceder a la interfaz web (cliente) desde otro equipo en la misma red.
+- Sistema operativo: Ubuntu 20.04 LTS o superior
+- Node.js: v18.x o superior
+- pnpm: v8.x o superior
+- Dependencias del sistema: `suricata` e `iptables`
 
-### 2\. Clonar el repositorio
+> Si no tienes Node.js instalado, descargalo desde su sitio oficial: https://nodejs.org/en/download
+> No uses `sudo apt install npm` — los repositorios de Ubuntu instalan versiones obsoletas.
+
+Para instalar pnpm una vez que tienes Node.js:
+
+```bash
+npm install -g pnpm
+```
+
+---
+
+## Instalacion y Despliegue
+
+### 1. Reconocimiento del entorno
+
+Este repositorio es un monorepo que contiene el cliente y el servidor en carpetas separadas. Puedes clonar y ejecutar todo en la misma maquina, o acceder a la interfaz desde otro equipo en la misma red.
+
+```
+runawulf/
+├── client/    — interfaz web (React)
+└── server/    — backend (Node.js)
+```
+
+### 2. Clonar el repositorio
 
 ```bash
 git clone git@github.com:yohanvillarp/runawulf.git
 cd runawulf
 ```
 
-### 3.1. Instalación de dependencias
+### 3. Instalar dependencias
 
-Instalamos las dependencias de la interfaz visual y el servidor.
+Desde la raiz del proyecto, pnpm instalara las dependencias del cliente y del servidor en un solo paso:
 
 ```bash
-npm install
+pnpm install
 ```
 
-### 3.2 Ejecución del proyecto (Cliente)
-
-Iniciamos la interfaz.
+### 4. Ejecutar el cliente
 
 ```bash
 cd client
-npm run dev
+pnpm dev
 ```
 
-La interfaz debería iniciar correctamente:
-![Captura de pantalla del inicio de Runawulf](./docs/images/interfaz_runawulf.png)
+La interfaz deberia iniciar en `http://localhost:5173`:
 
-### 4.1 Gestión de permisos (Servidor)
+![Inicio de Runawulf](./docs/images/interfaz_runawulf.png)
 
-Configuramos los scripts necesarios en el backend.
+### 5. Configurar permisos del servidor
+
+El servidor necesita permisos para ejecutar comandos del sistema. Desde la carpeta `server/`:
 
 ```bash
 cd server
@@ -67,30 +98,79 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### 4.2 Ejecución del proyecto (Servidor)
-
-Debido a que la conversión a servicio de sistema aún es experimental, ejecuta el servidor manualmente:
+### 6. Ejecutar el servidor
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-Deberías ver la confirmación de ejecución:
-![Captura de pantalla del mensaje de confirmación del servidor](./docs/images/ejecucion_server_runawulf.png)
+Deberias ver la confirmacion de ejecucion:
 
-### 5\. Ingreso a la interfaz
+![Confirmacion del servidor](./docs/images/ejecucion_server_runawulf.png)
 
-Para conectar la interfaz con el servidor, necesitas la dirección IP. Si estás en la misma máquina usa `127.0.0.1` (localhost), caso contrario, consulta tu IP con:
+### 7. Conectar la interfaz al servidor
+
+Para conectar el cliente con el servidor necesitas la direccion IP del servidor. Si estas en la misma maquina usa `127.0.0.1`. Si accedes desde otro equipo en la red, consulta tu IP con:
 
 ```bash
 ip a
 ```
 
-
-
 Ingresa esa IP en la pantalla de bienvenida:
-![Captura de pantalla de la conexión del servidor con la interfaz](./docs/images/primera_ejecucion.png)
 
-### 6. Experimenta
-Todo listo, prueba los modulos (aún no todos están terminados)
-![Captura de pantalla del inicio de Runawulf](./docs/images/Dashboard_runawulf.png)
+![Conexion del servidor](./docs/images/primera_ejecucion.png)
+
+### 8. Explorar los modulos
+
+Una vez conectado, puedes acceder a los modulos disponibles desde el dashboard:
+
+![Dashboard de Runawulf](./docs/images/Dashboard_runawulf.png)
+
+> No todos los modulos estan terminados. Berkano (Copias de Seguridad) esta en desarrollo.
+
+---
+
+## Estructura del Proyecto
+
+```
+runawulf/
+├── client/
+│   └── src/
+│       ├── app/          — providers y configuracion global
+│       ├── pages/        — vistas enrutadas
+│       ├── widgets/      — componentes de layout
+│       ├── features/
+│       │   ├── firewall/       — Algiz
+│       │   ├── monitoring/     — Raido
+│       │   └── intrusion/      — Eiwaz
+│       └── shared/       — componentes, hooks y utilidades compartidas
+├── server/
+│   └── src/
+│       ├── app.ts
+│       ├── WebSocketServer.ts
+│       └── WsMessageHandler.ts
+└── docs/
+    ├── OVERVIEW.md
+    └── WORKFLOW.md
+```
+
+---
+
+## Documentacion
+
+- [Vision general del proyecto](./docs/OVERVIEW.md) — arquitectura, modulos y direccion del proyecto
+- [Flujo de trabajo con Git](./docs/WORKFLOW.md) — convencion de ramas y commits
+
+---
+
+## Contribuir
+
+Las contribuciones son bienvenidas. Si quieres reportar un error, proponer una mejora o trabajar en un modulo nuevo, abre un issue o un pull request desde la rama `develop`.
+
+Antes de contribuir, revisa el [flujo de trabajo](./docs/WORKFLOW.md) del proyecto.
+
+---
+
+## Licencia
+
+MIT — consulta el archivo [LICENSE](./LICENSE) para mas informacion.

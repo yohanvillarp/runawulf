@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useWebSocket } from "../../context/useWebSocket";
+import { useWebSocket } from "./useWebSocket";
 import { WEBSOCKET_MESSAGE_TYPES } from "../constants/webSocketTypes";
 
 export const useScript = <T extends object[]>(initialData: T, script: string) => {
