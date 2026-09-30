@@ -15,7 +15,7 @@ export const IpcRequestEnvelopeSchema = z.object({
   protocolVersion: z.literal(IPC_PROTOCOL_VERSION),
   requestId: z.string().uuid(),
   operation: z.string().min(1).max(64),
-  payload: z.record(z.unknown()),
+  payload: z.record(z.string(), z.unknown()),
   deadlineMs: z.number().int().positive().max(60000).default(5000),
 });
 

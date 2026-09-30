@@ -1,0 +1,65 @@
+#!/bin/sh
+# ==============================================================================
+# Runawulf — Debian/Ubuntu Package Post-Installation Script (postinst)
+# Enforces Invariants I1, I3, I4, and I6 during package deployment
+# ==============================================================================
+set -e
+
+# 1. Create unprivileged system user for the Web Gateway (Invariant I1)
+if ! id -u runawulf >/dev/null 2>&1; then
+    useradd --system --no-create-home --shell /usr/sbin/nologin runawulf
+fi
+
+# 2. Create state, configuration, and log directories
+mkdir -p /etc/runawulf
+mkdir -p /var/lib/runawulf
+mkdir -p /var/log/runawulf
+
+chown -R root:runawulf /etc/runawulf
+chmod 0750 /etc/runawulf
+
+chown -R runawulf:runawulf /var/lib/runawulf
+chmod 0750 /var/lib/runawulf
+
+chown -R runawulf:runawulf /var/log/runawulf
+chmod 0750 /var/log/runawulf
+
+# 3. Provision cryptographic HMAC audit ledger key (Invariant I6)
+# Key MUST be strictly root-owned (mode 0400), unreadable by unprivileged runawulf
+if [ ! -f /etc/runawulf/audit.key ]; then
+    head -c 32 /dev/urandom | xxd -p -c 32 > /etc/runawulf/audit.key 2>/dev/null || openssl rand -hex 32 > /etc/runawulf/audit.key
+    chown root:root /etc/runawulf/audit.key
+    chmod 0400 /etc/runawulf/audit.key
+fi
+
+# 4. Provision default configuration files if not present
+if [ ! -f /etc/runawulf/runawulf.yaml ] && [ -f /etc/runawulf/runawulf.yaml.example ]; then
+    cp /etc/runawulf/runawulf.yaml.example /etc/runawulf/runawulf.yaml
+    chmod 0640 /etc/runawulf/runawulf.yaml
+    chown root:runawulf /etc/runawulf/runawulf.yaml
+fi
+
+if [ ! -f /etc/runawulf/privileged-policy.yaml ] && [ -f /etc/runawulf/privileged-policy.yaml.example ]; then
+    cp /etc/runawulf/privileged-policy.yaml.example /etc/runawulf/privileged-policy.yaml
+    chmod 0644 /etc/runawulf/privileged-policy.yaml
+    chown root:root /etc/runawulf/privileged-policy.yaml
+fi
+
+# 5. Initialize nftables table inet runawulf (Invariant I4)
+if command -v nft >/dev/null 2>&1; then
+    nft add table inet runawulf 2>/dev/null || true
+fi
+
+# 6. Apply sysctl hardening rules if file exists
+if [ -f /etc/sysctl.d/99-runawulf.conf ] && command -v sysctl >/dev/null 2>&1; then
+    sysctl --system -q 2>/dev/null || true
+fi
+
+# 7. Reload systemd daemon and activate socket
+if [ -d /run/systemd/system ]; then
+    systemctl --system daemon-reload >/dev/null 2>&1 || true
+    systemctl enable runawulf-helper.socket >/dev/null 2>&1 || true
+    systemctl start runawulf-helper.socket >/dev/null 2>&1 || true
+fi
+
+exit 0

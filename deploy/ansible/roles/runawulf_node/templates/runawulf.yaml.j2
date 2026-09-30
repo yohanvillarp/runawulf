@@ -1,0 +1,23 @@
+# ==============================================================================
+# Runawulf — Node Configuration (Managed by Ansible)
+# ==============================================================================
+server:
+  host: "{{ runawulf_http_host }}"
+  port: {{ runawulf_http_port }}
+  cors:
+    origin: false
+
+security:
+  audit_key_path: "{{ runawulf_config_dir }}/audit.key"
+  ipc_socket_path: "/run/runawulf/helper.sock"
+  policy_path: "{{ runawulf_config_dir }}/privileged-policy.yaml"
+
+telemetry:
+  metrics_enabled: true
+  metrics_port: 9090
+
+ai:
+  enabled: {{ runawulf_ai_enabled | lower }}
+  provider: "{{ runawulf_ai_provider }}"
+  model: "{{ runawulf_ai_model }}"
+  advisory_mode_only: true

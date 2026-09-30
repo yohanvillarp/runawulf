@@ -1,0 +1,75 @@
+# ==============================================================================
+# Runawulf — nFPM Packaging Specification (Debian .deb & RedHat .rpm)
+# Reference: https://nfpm.goreleaser.com/configuration/
+# ==============================================================================
+
+name: "runawulf"
+arch: "amd64"
+platform: "linux"
+version: "v2.0.0-alpha.1"
+section: "net"
+priority: "optional"
+maintainer: "Runawulf Core Team <security@runawulf.io>"
+description: |
+  Lightweight, local, event-driven control plane for Linux that coordinates
+  real-time telemetry, eBPF intrusion detection, and declarative nftables
+  firewall enforcement under a zero-trust closed loop.
+vendor: "Runawulf Project"
+homepage: "https://github.com/yohanvillarp/runawulf"
+license: "MIT"
+
+depends:
+  - nftables (>= 0.9.8)
+  - libbpf0 (>= 0.5.0)
+  - systemd
+  - ca-certificates
+
+contents:
+  # Systemd units
+  - src: "systemd/runawulf-helper.socket"
+    dst: "/lib/systemd/system/runawulf-helper.socket"
+    file_info:
+      mode: 0644
+  - src: "systemd/runawulf-helper.service"
+    dst: "/lib/systemd/system/runawulf-helper.service"
+    file_info:
+      mode: 0644
+  - src: "systemd/runawulfd.service"
+    dst: "/lib/systemd/system/runawulfd.service"
+    file_info:
+      mode: 0644
+  - src: "systemd/runawulf-sensor.service"
+    dst: "/lib/systemd/system/runawulf-sensor.service"
+    file_info:
+      mode: 0644
+  - src: "systemd/runawulf-ai.service"
+    dst: "/lib/systemd/system/runawulf-ai.service"
+    file_info:
+      mode: 0644
+
+  # Reference configuration templates
+  - src: "config/runawulf.default.yaml"
+    dst: "/etc/runawulf/runawulf.yaml.example"
+    file_info:
+      mode: 0644
+  - src: "config/privileged-policy.default.yaml"
+    dst: "/etc/runawulf/privileged-policy.yaml.example"
+    file_info:
+      mode: 0644
+
+  # Sysctl hardening preset
+  - src: "config/sysctl/99-runawulf.conf"
+    dst: "/etc/sysctl.d/99-runawulf.conf"
+    file_info:
+      mode: 0644
+
+  # AppArmor security profile
+  - src: "security/apparmor/usr.sbin.runawulfd"
+    dst: "/etc/apparmor.d/usr.sbin.runawulfd"
+    file_info:
+      mode: 0644
+
+scripts:
+  postinstall: "packaging/scripts/postinst"
+  preremove: "packaging/scripts/prerm"
+  postremove: "packaging/scripts/postrm"

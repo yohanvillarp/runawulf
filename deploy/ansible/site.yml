@@ -1,0 +1,12 @@
+---
+# ==============================================================================
+# Runawulf — Ansible Deployment Playbook
+# Provisions production Linux nodes with Runawulf Control Plane & Helper
+# ==============================================================================
+- name: Deploy Runawulf Local Control Plane
+  hosts: control_nodes
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: runawulf_node

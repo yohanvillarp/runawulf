@@ -1,0 +1,18 @@
+#!/bin/sh
+# ==============================================================================
+# Runawulf — Package Post-Removal Script (postrm)
+# Reloads systemd daemon and conditionally purges configuration on purge
+# ==============================================================================
+set -e
+
+if [ "$1" = "purge" ]; then
+    rm -rf /var/lib/runawulf
+    rm -rf /var/log/runawulf
+    # Note: /etc/runawulf and audit.key are deliberately preserved unless purged manually
+fi
+
+if [ -d /run/systemd/system ]; then
+    systemctl --system daemon-reload >/dev/null 2>&1 || true
+fi
+
+exit 0

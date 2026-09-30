@@ -84,11 +84,21 @@ cd runawulf
 # Install dependencies and initialize Husky git hooks
 npm install
 
-# Verify quality gates & file lengths
+# Verify file length limits & YAML syntax
 npm run lint:lengths
+npm run lint:yaml
 
 # Run typecheck across all workspaces
 npm run typecheck
+
+# Build all packages and web UI
+make build   # or npm run build
+
+# Cross-platform development with Mock Simulator (Windows / macOS)
+npm run dev:mock
+
+# Full Linux Kernel sandbox (eBPF & nftables)
+vagrant up   # or bash test/multipass/launch.sh
 
 # Run test suite
 npm test

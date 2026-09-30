@@ -1,0 +1,43 @@
+# ==============================================================================
+# Runawulf — Docker Compose Local Development Environment
+# Runs the Web Cockpit and Control Plane Daemon with Mock eBPF & Helper Socket
+# ==============================================================================
+version: "3.8"
+
+services:
+  # Mock Simulator & Control Plane Daemon
+  daemon:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    container_name: runawulf-daemon-dev
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - RUNAWULF_MOCK_MODE=true
+    ports:
+      - "4000:4000"
+      - "9090:9090"
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules
+    working_dir: /workspace
+    command: npm run dev --workspace=@runawulf/daemon
+
+  # Web Cockpit SPA (Vite Hot Module Replacement)
+  web:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    container_name: runawulf-web-dev
+    environment:
+      - VITE_API_URL=http://localhost:4000
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules
+    working_dir: /workspace
+    command: npm run dev --workspace=@runawulf/web -- --host 0.0.0.0
+    depends_on:
+      - daemon

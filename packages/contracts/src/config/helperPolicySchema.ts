@@ -16,7 +16,7 @@ export const HelperPolicySchema = z.object({
   firewall: z.object({
     managedTable: z.literal('table inet runawulf').default('table inet runawulf'),
     maxDynamicBlockDurationSeconds: z.number().int().max(86400 * 30).default(86400 * 7),
-    protectedCidrs: z.array(z.string().cidr()).default(['127.0.0.1/32']),
+    protectedCidrs: z.array(z.string().regex(/^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$/, { message: 'Must be a valid IPv4 CIDR' })).default(['127.0.0.1/32']),
     protectedPorts: z.array(z.number().int().min(1).max(65535)).default([22, 4000]),
   }).default({
     managedTable: 'table inet runawulf',
