@@ -1,5 +1,8 @@
 {
   "*.{ts,tsx}": [
     "node scripts/check-file-lengths.js"
+  ],
+  "*.{yml,yaml}": [
+    "node scripts/check-yaml.js"
   ]
 }

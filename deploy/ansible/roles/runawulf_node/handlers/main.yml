@@ -1,24 +1,25 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/handlers
 # ==============================================================================
 # Ansible Role Handlers: runawulf_node
 # ==============================================================================
 
-- name: Reload systemd
+- name: "Reload systemd"
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: Restart runawulfd
+- name: "Restart runawulfd"
   ansible.builtin.systemd:
     name: runawulfd
     state: restarted
 
-- name: Restart runawulf-helper
+- name: "Restart runawulf-helper"
   ansible.builtin.systemd:
     name: runawulf-helper.service
     state: restarted
   failed_when: false
 
-- name: Restart runawulf-sensor
+- name: "Restart runawulf-sensor"
   ansible.builtin.systemd:
     name: runawulf-sensor
     state: restarted

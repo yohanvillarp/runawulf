@@ -1,9 +1,10 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/tasks
 # ==============================================================================
 # Ansible Role Tasks: runawulf_node
 # ==============================================================================
 
-- name: Install prerequisite system packages
+- name: "Install prerequisite system packages"
   ansible.builtin.apt:
     name:
       - nftables
@@ -15,13 +16,13 @@
     state: present
     update_cache: true
 
-- name: Ensure runawulf system group exists
+- name: "Ensure runawulf system group exists"
   ansible.builtin.group:
     name: "{{ runawulf_group }}"
     system: true
     state: present
 
-- name: Ensure unprivileged runawulf system user exists (Invariant I1)
+- name: "Ensure unprivileged runawulf system user exists (Invariant I1)"
   ansible.builtin.user:
     name: "{{ runawulf_user }}"
     group: "{{ runawulf_group }}"
@@ -30,7 +31,7 @@
     create_home: false
     state: present
 
-- name: Create Runawulf configuration directory (mode 0750, root:runawulf)
+- name: "Create Runawulf configuration directory"
   ansible.builtin.file:
     path: "{{ runawulf_config_dir }}"
     state: directory
@@ -38,7 +39,7 @@
     group: "{{ runawulf_group }}"
     mode: "0750"
 
-- name: Create Runawulf state and log directories (runawulf:runawulf)
+- name: "Create Runawulf state and log directories"
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -49,24 +50,24 @@
     - "{{ runawulf_state_dir }}"
     - "{{ runawulf_log_dir }}"
 
-- name: Check if cryptographic audit key exists
+- name: "Check if cryptographic audit key exists"
   ansible.builtin.stat:
     path: "{{ runawulf_config_dir }}/audit.key"
   register: audit_key_file
 
-- name: Generate cryptographic audit key if missing (Invariant I6: 0400 root:root)
+- name: "Generate cryptographic audit key if missing (Invariant I6)"
   ansible.builtin.shell: "openssl rand -hex 32 > {{ runawulf_config_dir }}/audit.key"
   when: not audit_key_file.stat.exists
   changed_when: true
 
-- name: Enforce strict root-only permissions on audit key (Invariant I6)
+- name: "Enforce strict root-only permissions on audit key (Invariant I6)"
   ansible.builtin.file:
     path: "{{ runawulf_config_dir }}/audit.key"
     owner: root
     group: root
     mode: "0400"
 
-- name: Deploy privileged-policy.yaml (Invariant I3: root-owned, 0644)
+- name: "Deploy privileged-policy.yaml (Invariant I3)"
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../../config/privileged-policy.default.yaml"
     dest: "{{ runawulf_config_dir }}/privileged-policy.yaml"
@@ -75,7 +76,7 @@
     mode: "0644"
   notify: Restart runawulf-helper
 
-- name: Deploy runawulf.yaml configuration template
+- name: "Deploy runawulf.yaml configuration template"
   ansible.builtin.template:
     src: runawulf.yaml.j2
     dest: "{{ runawulf_config_dir }}/runawulf.yaml"
@@ -84,7 +85,7 @@
     mode: "0640"
   notify: Restart runawulfd
 
-- name: Deploy systemd unit files
+- name: "Deploy systemd unit files"
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../../systemd/{{ item }}"
     dest: "{{ runawulf_systemd_dir }}/{{ item }}"
@@ -99,16 +100,16 @@
     - runawulf-ai.service
   notify: Reload systemd
 
-- name: Ensure table inet runawulf exists in nftables (Invariant I4)
+- name: "Ensure table inet runawulf exists in nftables (Invariant I4)"
   ansible.builtin.command: nft add table inet runawulf
   register: nft_table_result
   failed_when: false
   changed_when: nft_table_result.rc == 0
 
-- name: Flush handlers to trigger daemon-reload before starting services
+- name: "Flush handlers to trigger daemon-reload before starting services"
   ansible.builtin.meta: flush_handlers
 
-- name: Enable and start systemd socket and daemon services
+- name: "Enable and start systemd socket and daemon services"
   ansible.builtin.systemd:
     name: "{{ item }}"
     enabled: true

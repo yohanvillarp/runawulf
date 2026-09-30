@@ -16,6 +16,7 @@
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "lint:lengths": "node scripts/check-file-lengths.js",
+    "lint:yaml": "node scripts/check-yaml.js",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "dev:mock": "node --experimental-strip-types tools/simulator/index.ts",
     "clean": "npm run clean --workspaces --if-present"
