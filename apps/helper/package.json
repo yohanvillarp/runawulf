@@ -12,7 +12,7 @@
   "dependencies": {
     "@runawulf/contracts": "*",
     "yaml": "^2.7.0",
-    "zod": "^3.24.0"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@runawulf/tsconfig": "*",
