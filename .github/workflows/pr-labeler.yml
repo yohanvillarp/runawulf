@@ -11,7 +11,7 @@ permissions:
 jobs:
   label:
     name: "Label PR by Architectural Plane"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/labeler@v7
         with:
