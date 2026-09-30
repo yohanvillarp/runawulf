@@ -1,0 +1,51 @@
+#cloud-config
+# ==============================================================================
+# Runawulf — Cloud-Init Node Provisioning Blueprint
+# Target OS: Ubuntu 22.04 LTS (Jammy)
+# ==============================================================================
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - nftables
+  - libbpf-dev
+  - bpftool
+  - ca-certificates
+  - curl
+  - jq
+  - build-essential
+
+users:
+  - default
+  - name: runawulf
+    system: true
+    shell: /usr/sbin/nologin
+    no_create_home: true
+
+write_files:
+  - path: /etc/sysctl.d/99-runawulf.conf
+    owner: root:root
+    permissions: '0644'
+    content: |
+      net.core.bpf_jit_harden = 2
+      kernel.unprivileged_bpf_disabled = 1
+      net.core.bpf_jit_enable = 1
+
+runcmd:
+  # Apply kernel sysctl hardening
+  - sysctl --system
+  # Create state and config directories
+  - mkdir -p /etc/runawulf /var/lib/runawulf /var/log/runawulf
+  - chown -R root:runawulf /etc/runawulf && chmod 0750 /etc/runawulf
+  - chown -R runawulf:runawulf /var/lib/runawulf && chmod 0750 /var/lib/runawulf
+  # Generate HMAC audit key (Invariant I6)
+  - head -c 32 /dev/urandom | xxd -p -c 32 > /etc/runawulf/audit.key
+  - chown root:root /etc/runawulf/audit.key && chmod 0400 /etc/runawulf/audit.key
+  # Initialize table inet runawulf (Invariant I4)
+  - nft add table inet runawulf || true
+  # Install Node.js 20.x
+  - mkdir -p /etc/apt/keyrings
+  - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+  - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
+  - apt-get update -y && apt-get install -y nodejs

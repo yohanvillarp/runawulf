@@ -1,0 +1,24 @@
+---
+# ==============================================================================
+# Ansible Role Defaults: runawulf_node
+# ==============================================================================
+runawulf_version: "2.0.0-alpha.1"
+runawulf_user: "runawulf"
+runawulf_group: "runawulf"
+
+# Network & Ports
+runawulf_http_port: 4000
+runawulf_http_host: "127.0.0.1"
+
+# Directory layout
+runawulf_config_dir: "/etc/runawulf"
+runawulf_state_dir: "/var/lib/runawulf"
+runawulf_log_dir: "/var/log/runawulf"
+runawulf_systemd_dir: "/etc/systemd/system"
+
+# Security & Policies
+runawulf_enforce_apparmor: false
+runawulf_rollback_timeout_seconds: 30
+runawulf_ai_enabled: false
+runawulf_ai_provider: "anthropic"
+runawulf_ai_model: "claude-3-5-sonnet-20241022"
