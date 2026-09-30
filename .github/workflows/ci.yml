@@ -22,10 +22,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v7
 
-      - name: Setup Node.js 20.x
+      - name: Setup Node.js 22.x LTS
         uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
@@ -60,9 +60,9 @@ jobs:
       - name: Install Clang, LLVM & Libbpf
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-14 llvm-14 libbpf-dev linux-tools-common linux-tools-generic
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100
-          sudo update-alternatives --install /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-14 100
+          sudo apt-get install -y clang-14 llvm-14 libbpf-dev linux-tools-common linux-tools-generic "linux-tools-$(uname -r)" bpftool || true
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100 || true
+          sudo update-alternatives --install /usr/bin/llvm-strip llvm-strip /usr/bin/llvm-strip-14 100 || true
 
       - name: Compile eBPF Objects
         run: make bpf
