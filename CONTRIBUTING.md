@@ -73,7 +73,7 @@ Commits must follow the **Conventional Commits** specification:
 ### Prerequisites
 * Node.js $\ge$ 20.0.0
 * npm $\ge$ 9.0.0
-* Linux (Ubuntu 22.04 LTS recommended) or Windows 11 with PowerShell 7+
+* Linux (Ubuntu Server 24.04 LTS+ recommended) or Windows 11 with PowerShell 7+
 
 ### Getting Started
 ```bash

@@ -2,7 +2,7 @@
 
 > **Technical Reference for Build Tooling, Sandboxing, Packaging, and Automation**  
 > **Repository:** `runawulf`  
-> **Target OS:** Ubuntu 22.04 LTS (Jammy) • Linux Kernel 5.15+
+> **Target OS:** Ubuntu Server 24.04 LTS+ (Noble) • Linux Kernel 6.8+
 
 ---
 
@@ -23,7 +23,7 @@ The root `Makefile` orchestrates compilation across both the C/eBPF toolchain an
 | `make help` | Displays list of targets with colored descriptions. | `awk` |
 | `make install-deps` | Installs npm dependencies across all workspaces. | `npm` |
 | `make build` | Runs TypeScript project references build for all packages and Vite build for web. | `npm` |
-| `make bpf` | Compiles `bpf/src/*.bpf.c` using `clang-14` and `llvm-strip`. | `clang-14`, `llvm-14`, `libbpf` |
+| `make bpf` | Compiles `bpf/src/*.bpf.c` using `clang-18` and `llvm-strip`. | `clang-18`, `llvm-18`, `libbpf` |
 | `make bpf-clean` | Cleans compiled `.bpf.o` objects. | `make` |
 | `make lint` | Executes ESLint, file-length guardrails (`scripts/check-file-lengths.js`), and YAML syntax check. | `node` |
 | `make package-deb` | Builds native `.deb` package via `nfpm`. | `nfpm` |
@@ -39,7 +39,7 @@ The root `Makefile` orchestrates compilation across both the C/eBPF toolchain an
 Testing eBPF and nftables requires a real Linux kernel.
 
 ### A. Vagrant (`test/vagrant/Vagrantfile`)
-* **Base OS:** Ubuntu 22.04 LTS.
+* **Base OS:** Ubuntu Server 24.04 LTS+.
 * **Provider:** VirtualBox or Libvirt (KVM).
 * **Port Forwards:** 4000 (Control Plane) and 9090 (Prometheus).
 * **Workflow:**

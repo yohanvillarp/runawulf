@@ -6,7 +6,7 @@ Security fixes are actively maintained for the following versions of Runawulf:
 
 | Version | Supported | Minimum OS Baseline |
 | :--- | :---: | :--- |
-| **2.0.x (alpha/current)** | ✅ | Ubuntu 22.04 LTS+ (Kernel $\ge$ 5.15, systemd $\ge$ 249) |
+| **2.0.x (alpha/current)** | ✅ | Ubuntu Server 24.04 LTS+ (Kernel $\ge$ 6.8, systemd $\ge$ 255) |
 | < 2.0.0 (legacy) | ❌ | End of Life (Archived in `legacy/`) |
 
 ---

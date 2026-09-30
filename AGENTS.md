@@ -3,7 +3,7 @@
 > **Canonical Instructions, Architecture Rules, and Security Invariants for AI Coding Assistants**  
 > **Applies to:** Antigravity, Gemini, Claude, Copilot, and autonomous agent systems.  
 > **Repository:** `runawulf` (Linux Local Control Plane)  
-> **Target OS:** Ubuntu 22.04 LTS+  
+> **Target OS:** Ubuntu Server 24.04 LTS+  
 > **Documentation Language:** English (mandatory for all code, comments, JSDoc, and commits)
 
 ---

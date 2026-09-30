@@ -2,7 +2,7 @@
 
 > **Documento de Diseño Técnico, Seguridad de Infraestructura y Fronteras de Privilegio**  
 > **Estado:** Especificación de Arquitectura de Referencia (Congelada para Implementación)  
-> **Ámbito:** Servidores Linux (Ubuntu 22.04 LTS+)
+> **Ámbito:** Servidores Linux (Ubuntu Server 24.04 LTS+)
 
 ---
 
@@ -386,7 +386,7 @@ FASE 5: Módulos Declarativos e Interfaz de Usuario
 FASE 6: Hardening, Inyección de Fallos y Empaquetado
 ├── Pruebas de inyección de fallos (crash del daemon durante rollback, rotación de logs, JSON corrupto)
 ├── Endurecimiento de systemd units (NoNewPrivileges, ProtectSystem, PrivateTmp)
-└── Empaquetado .deb e instalador para Ubuntu 22.04+
+└── Empaquetado .deb e instalador para Ubuntu Server 24.04 LTS+
 ```
 
 ---
