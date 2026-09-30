@@ -1,0 +1,22 @@
+{
+  "name": "@runawulf/helper",
+  "version": "2.0.0-alpha.1",
+  "description": "Restricted privileged system worker activated via systemd.socket for Runawulf",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@runawulf/contracts": "*",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@runawulf/tsconfig": "*",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
