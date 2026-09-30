@@ -1,0 +1,113 @@
+/**
+ * @file en.ts
+ * @description English translations (primary locale) for Runawulf Control Plane.
+ */
+
+import type { TranslationDictionary } from '../types.js';
+
+export const en: TranslationDictionary = {
+  nav: {
+    dashboard: 'Dashboard',
+    firewall: 'Algiz Firewall',
+    intrusion: 'Eiwaz IDS',
+    telemetry: 'Raido Telemetry',
+    audit: 'Audit Ledger',
+    settings: 'Configuration',
+    version: 'Runawulf v2.0.0-alpha',
+  },
+  header: {
+    statusConnected: 'Daemon Online',
+    postureLabel: 'Posture',
+    switchPosture: 'Switch Operational Posture',
+    selectLanguage: 'Select Language',
+  },
+  modes: {
+    guardian: {
+      name: 'Guardian',
+      tagline: 'Autonomous Active Defense',
+      description: 'Automated loop: Suricata EVE detections trigger policy evaluation and instant nftables dynamic set isolation.',
+      themeLabel: 'Arctic Frost',
+    },
+    watcher: {
+      name: 'Watcher',
+      tagline: 'Passive Sentinel & Forensics',
+      description: 'Telemetry and intrusion detection active. Real-time alerts logged to audit ledger without automatic rule mutation.',
+      themeLabel: 'Odin Amber',
+    },
+    lockdown: {
+      name: 'Lockdown',
+      tagline: 'Perimeter Containment',
+      description: 'Emergency containment posture: blocks all non-essential ingress traffic while protecting local management channels.',
+      themeLabel: 'Fenrir Crimson',
+    },
+  },
+  views: {
+    guardian: {
+      title: 'Tactical Command Center',
+      badge: 'AUTONOMOUS ACTIVE SHIELD',
+      defenseNominal: 'Autonomous mitigations active across table inet runawulf',
+      telemetryTitle: 'Host Telemetry (Raido)',
+      cpuTitle: 'CPU Usage',
+      memTitle: 'Memory Allocation',
+      ipcTitle: 'Helper Socket IPC',
+      loadTitle: 'Load Average',
+      firewallOverview: 'Algiz nftables Dynamic Sets',
+      activeSetsTitle: 'Active Sets (IPv4 / IPv6)',
+      threatStatus: 'ET Ruleset Threat Stream Nominal',
+    },
+    watcher: {
+      title: 'Telemetry & Forensics Observatory',
+      badge: 'PASSIVE SURICATA EVE STREAM',
+      streamTitle: 'Live Intrusion Stream & Network Telemetry',
+      streamSubtitle: 'Inspecting raw packet metadata and ET Open signatures without automated mutations.',
+      filterPlaceholder: 'Filter by source IP, signature or severity...',
+      eventsCaptured: 'Events Ingested',
+      suricataVersion: 'Suricata 7.0.2 EVE Stream',
+      exportLogs: 'Export Audit Log',
+      tableTime: 'TIMESTAMP',
+      tableSeverity: 'SEV',
+      tableSource: 'SOURCE -> DESTINATION',
+      tableSignature: 'SIGNATURE / RULE',
+      tableAction: 'DISPOSITION',
+    },
+    lockdown: {
+      title: 'Emergency Containment Deck',
+      badge: 'CRITICAL HIGH ALERT',
+      alertMessage: 'Perimeter containment armed. All non-whitelisted ingress traffic is dropped at the nftables kernel layer.',
+      rollbackWatchdog: 'Root Watchdog Rollback Timer',
+      rollbackSecondsRemaining: 'Seconds until auto-rollback if uncommitted:',
+      commitAction: 'Commit Lockdown (Permanent)',
+      rollbackAction: 'Rollback to Guardian Now',
+      quarantineTitle: 'Quarantine Matrix',
+      portsIsolated: 'Protected Ports: SSH (22), Daemon API (4000)',
+      emergencyDropAll: 'Emergency Drop Dynamic Set: Active (28 blocked)',
+    },
+  },
+  onboarding: {
+    title: 'THE RUNIC AWAKENING',
+    subtitle: 'Host Verification & Defense Plane Initialization',
+    step1Title: 'Kernel & Network Interface',
+    step1Desc: 'Bind the declarative nftables table to the primary host interface.',
+    step2Title: 'Eiwaz Intrusion Sensor',
+    step2Desc: 'Verify Suricata EVE log stream follower and ET Open ruleset.',
+    step3Title: 'Default Defense Posture',
+    step3Desc: 'Choose your default operational posture upon system boot.',
+    step4Title: 'Cryptographic Ledger Seed',
+    step4Desc: 'Generate and anchor the root HMAC-SHA256 audit ledger key.',
+    btnNext: 'Next Step',
+    btnBack: 'Previous',
+    btnArm: 'Awaken Runawulf',
+    interfaceDetected: 'Detected Interfaces',
+    evePathLabel: 'Suricata EVE Log File Path',
+    postureSelectLabel: 'Select Initial Posture',
+    hmacKeyReady: 'HMAC-SHA256 root key generated at /etc/runawulf/audit.key',
+    completeNotice: 'Host verification successful. Arming local control plane...',
+  },
+  common: {
+    active: 'Active',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    systemNominal: 'System Nominal',
+    live: 'LIVE',
+  },
+};
