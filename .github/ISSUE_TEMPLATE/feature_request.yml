@@ -1,0 +1,33 @@
+name: "💡 Feature Request / RFC"
+description: "Suggest a new capability, sensor probe, or declarative module for Runawulf"
+title: "[FEATURE]: "
+labels: ["enhancement", "proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Runawulf is a lightweight, local control plane for Linux.
+        New features must adhere to our clean hexagonal architecture and strict separation of privilege.
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: Problem Statement
+      description: "Is your feature request related to a specific operational problem or limitation?"
+      placeholder: "Managing volumetric UDP amplification requires early in-kernel drops before reaching nftables..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution & Architectural Plane
+      description: "Which plane does this belong to? (Data Plane eBPF, Control Plane Daemon, Cognitive Plane AI, or Privileged Helper)"
+      placeholder: "Add an optional XDP filter hook in runawulf-sensor synchronized from Algiz..."
+    validations:
+      required: true
+  - type: textarea
+    id: security_considerations
+    attributes:
+      label: Security & Privilege Assessment
+      description: "Does this require kernel capabilities or root escalation? How is isolation preserved?"
+    validations:
+      required: true
