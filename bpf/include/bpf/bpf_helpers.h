@@ -10,12 +10,19 @@
 #define __uint(name, val) int (*name)[val]
 #define __type(name, val) typeof(val) *name
 
-/* Standard BPF helper function prototypes */
-static void *(*bpf_map_lookup_elem)(void *map, const void *key) = (void *) 1;
-static void *(*bpf_ringbuf_reserve)(void *ringbuf, __u64 size, __u64 flags) = (void *) 131;
-static void (*bpf_ringbuf_submit)(void *data, __u64 flags) = (void *) 132;
-static __u64 (*bpf_get_current_pid_tgid)(void) = (void *) 14;
-static __u64 (*bpf_get_current_uid_gid)(void) = (void *) 15;
-static long (*bpf_get_current_comm)(void *buf, __u32 size_of_buf) = (void *) 16;
+/* Function pointer typedefs with explicit cast to eliminate clang init_conversion_failed */
+typedef void *(*bpf_map_lookup_elem_fn)(void *map, const void *key);
+typedef void *(*bpf_ringbuf_reserve_fn)(void *ringbuf, __u64 size, __u64 flags);
+typedef void (*bpf_ringbuf_submit_fn)(void *data, __u64 flags);
+typedef __u64 (*bpf_get_current_pid_tgid_fn)(void);
+typedef __u64 (*bpf_get_current_uid_gid_fn)(void);
+typedef long (*bpf_get_current_comm_fn)(void *buf, __u32 size_of_buf);
+
+static bpf_map_lookup_elem_fn bpf_map_lookup_elem = (bpf_map_lookup_elem_fn) 1;
+static bpf_ringbuf_reserve_fn bpf_ringbuf_reserve = (bpf_ringbuf_reserve_fn) 131;
+static bpf_ringbuf_submit_fn bpf_ringbuf_submit = (bpf_ringbuf_submit_fn) 132;
+static bpf_get_current_pid_tgid_fn bpf_get_current_pid_tgid = (bpf_get_current_pid_tgid_fn) 14;
+static bpf_get_current_uid_gid_fn bpf_get_current_uid_gid = (bpf_get_current_uid_gid_fn) 15;
+static bpf_get_current_comm_fn bpf_get_current_comm = (bpf_get_current_comm_fn) 16;
 
 #endif /* __BPF_HELPERS_H__ */
