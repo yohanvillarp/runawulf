@@ -1,0 +1,22 @@
+#!/bin/sh
+# ==============================================================================
+# Runawulf — Package Pre-Removal Script (prerm)
+# Safely stops active services and socket units before removal
+# ==============================================================================
+set -e
+
+if [ -d /run/systemd/system ]; then
+    systemctl stop runawulf-ai.service >/dev/null 2>&1 || true
+    systemctl stop runawulf-sensor.service >/dev/null 2>&1 || true
+    systemctl stop runawulfd.service >/dev/null 2>&1 || true
+    systemctl stop runawulf-helper.service >/dev/null 2>&1 || true
+    systemctl stop runawulf-helper.socket >/dev/null 2>&1 || true
+
+    systemctl disable runawulf-ai.service >/dev/null 2>&1 || true
+    systemctl disable runawulf-sensor.service >/dev/null 2>&1 || true
+    systemctl disable runawulfd.service >/dev/null 2>&1 || true
+    systemctl disable runawulf-helper.service >/dev/null 2>&1 || true
+    systemctl disable runawulf-helper.socket >/dev/null 2>&1 || true
+fi
+
+exit 0
