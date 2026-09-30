@@ -1,0 +1,33 @@
+[Unit]
+Description=Runawulf Cognitive Runtime Engine (Cognitive Plane)
+Documentation=https://github.com/yohanvillarp/runawulf
+After=network.target runawulfd.service
+Wants=runawulfd.service
+
+[Service]
+Type=simple
+User=runawulf-ai
+Group=runawulf-ai
+WorkingDirectory=/opt/runawulf
+ExecStart=/usr/bin/node apps/ai/dist/index.js
+Restart=on-failure
+RestartSec=5s
+
+# Systemd Credential Exposure (Ubuntu 22.04 LTS systemd 249 compatible)
+LoadCredential=ai-token:/etc/runawulf/credentials/ai.key
+
+# Sandboxing & Resource Isolation (Invariants I1, I10)
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryMax=4G
+CPUQuota=150%
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

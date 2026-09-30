@@ -1,0 +1,30 @@
+[Unit]
+Description=Runawulf eBPF Sensor Bridge (Sensor Plane)
+Documentation=https://github.com/yohanvillarp/runawulf
+After=network.target sys-fs-bpf.mount
+Wants=sys-fs-bpf.mount
+
+[Service]
+Type=simple
+User=runawulf-sensor
+Group=runawulf-sensor
+WorkingDirectory=/opt/runawulf
+ExecStart=/usr/bin/node apps/sensor/dist/index.js
+Restart=on-failure
+RestartSec=3s
+
+# Scoped Linux Capabilities (NO CAP_SYS_ADMIN)
+CapabilityBoundingSet=CAP_BPF CAP_NET_ADMIN CAP_PERFMON
+AmbientCapabilities=CAP_BPF CAP_NET_ADMIN CAP_PERFMON
+
+# Sandboxing
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+MemoryMax=1G
+CPUQuota=100%
+
+[Install]
+WantedBy=multi-user.target
