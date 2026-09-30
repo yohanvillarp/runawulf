@@ -10,7 +10,7 @@ export const MitigationRecommendationSchema = z.object({
   ]),
   target: z
     .object({
-      ip: z.string().ip().optional(),
+      ip: z.string().regex(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/, { message: 'Invalid IP address' }).optional(),
       port: z.number().int().min(1).max(65535).optional(),
       pid: z.number().int().positive().optional(),
       processIdentity: z.string().optional(),

@@ -10,14 +10,14 @@ import { z } from 'zod';
 // ==========================================
 
 export const AddBlockPayloadSchema = z.object({
-  ip: z.string().ip({ version: 'v4' }), // Can be expanded to v6
+  ip: z.string().regex(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/, { message: 'Must be a valid IPv4 address' }),
   durationSeconds: z.number().int().positive().max(86400 * 30), // Max 30 days
   reason: z.string().min(1).max(256),
 });
 export type AddBlockPayload = z.infer<typeof AddBlockPayloadSchema>;
 
 export const RemoveBlockPayloadSchema = z.object({
-  ip: z.string().ip(),
+  ip: z.string().regex(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/, { message: 'Invalid IP address' }),
 });
 export type RemoveBlockPayload = z.infer<typeof RemoveBlockPayloadSchema>;
 

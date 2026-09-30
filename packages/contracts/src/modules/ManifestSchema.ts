@@ -22,7 +22,7 @@ export const HttpHealthCheckSchema = z.object({
   }, { message: 'Invalid or restricted health-check URL' }),
   intervalSeconds: z.number().int().min(5).max(3600).default(15),
   expectedStatus: z.number().int().min(100).max(599).default(200),
-  metricExtraction: z.record(z.object({
+  metricExtraction: z.record(z.string(), z.object({
     jsonPath: z.string().min(1).regex(/^\$[a-zA-Z0-9_.\[\]*]+$/),
   })).optional(),
 });
