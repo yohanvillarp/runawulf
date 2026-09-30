@@ -1,0 +1,42 @@
+# Runawulf — PR Labeler Configuration
+# Automatically classifies Pull Requests based on modified monorepo paths
+
+"plane: sensor":
+  - changed-files:
+      - any-glob-to-any-file: ['apps/sensor/**', 'bpf/**']
+
+"plane: control":
+  - changed-files:
+      - any-glob-to-any-file: ['apps/daemon/**']
+
+"plane: cognitive":
+  - changed-files:
+      - any-glob-to-any-file: ['apps/ai/**']
+
+"plane: helper":
+  - changed-files:
+      - any-glob-to-any-file: ['apps/helper/**']
+
+"plane: web":
+  - changed-files:
+      - any-glob-to-any-file: ['apps/web/**']
+
+"area: contracts":
+  - changed-files:
+      - any-glob-to-any-file: ['packages/contracts/**', 'packages/tsconfig/**']
+
+"area: cli":
+  - changed-files:
+      - any-glob-to-any-file: ['apps/cli/**']
+
+"area: systemd":
+  - changed-files:
+      - any-glob-to-any-file: ['systemd/**', 'config/**']
+
+"area: security":
+  - changed-files:
+      - any-glob-to-any-file: ['SECURITY.md', 'AGENTS.md', 'GEMINI.md', '.agents/**']
+
+"area: tooling":
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**', '.husky/**', 'scripts/**', 'package.json', 'package-lock.json', '.gitattributes', '.editorconfig']
