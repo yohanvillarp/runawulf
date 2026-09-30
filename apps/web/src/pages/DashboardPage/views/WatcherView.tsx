@@ -12,91 +12,31 @@ import {
   Download,
   Filter,
   Eye,
-  FileCode,
 } from 'lucide-react';
-
-interface MockEveEvent {
-  id: string;
-  timestamp: string;
-  severity: 1 | 2 | 3;
-  srcIp: string;
-  destIp: string;
-  signature: string;
-  category: string;
-  action: 'AUDITED' | 'FLAGGED';
-}
-
-const MOCK_EVENTS: MockEveEvent[] = [
-  {
-    id: 'eve-01',
-    timestamp: '20:46:12.841',
-    severity: 1,
-    srcIp: '198.51.100.89:54210',
-    destIp: '10.0.0.4:22',
-    signature: 'ET SCAN Potential SSH Scan OUTBOUND',
-    category: 'Attempted Information Leak',
-    action: 'FLAGGED',
-  },
-  {
-    id: 'eve-02',
-    timestamp: '20:45:58.102',
-    severity: 2,
-    srcIp: '203.0.113.14:44321',
-    destIp: '10.0.0.4:4000',
-    signature: 'ET WEB_SERVER Possible SQL Injection in URI',
-    category: 'Web Application Attack',
-    action: 'FLAGGED',
-  },
-  {
-    id: 'eve-03',
-    timestamp: '20:45:40.553',
-    severity: 3,
-    srcIp: '192.0.2.77:50123',
-    destIp: '10.0.0.4:80',
-    signature: 'SURICATA HTTP Request anomalous user-agent (Go-http-client)',
-    category: 'Generic Protocol Command Decode',
-    action: 'AUDITED',
-  },
-  {
-    id: 'eve-04',
-    timestamp: '20:45:19.914',
-    severity: 3,
-    srcIp: '198.51.100.12:61002',
-    destIp: '10.0.0.4:443',
-    signature: 'ET INFO TLS SNI observed without valid SAN match',
-    category: 'Misc activity',
-    action: 'AUDITED',
-  },
-  {
-    id: 'eve-05',
-    timestamp: '20:44:50.218',
-    severity: 1,
-    srcIp: '203.0.113.205:58920',
-    destIp: '10.0.0.4:22',
-    signature: 'ET SCAN LibSSH Based SSH Vulnerability Probe',
-    category: 'Attempted Administrator Privilege Gain',
-    action: 'FLAGGED',
-  },
-];
+import { MOCK_EVENTS, type MockEveEvent } from './watcherData';
+import { WatcherInspector } from './WatcherInspector';
 
 export function WatcherView() {
   const { t } = useTranslation();
   const v = t.views.watcher;
+
   const [filterQuery, setFilterQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<MockEveEvent | null>(MOCK_EVENTS[0]);
 
   const filtered = MOCK_EVENTS.filter(
     (e) =>
+      e.signature.toLowerCase().includes(filterQuery.toLowerCase()) ||
       e.srcIp.toLowerCase().includes(filterQuery.toLowerCase()) ||
-      e.signature.toLowerCase().includes(filterQuery.toLowerCase())
+      e.destIp.toLowerCase().includes(filterQuery.toLowerCase())
   );
 
   return (
-    <div className="space-y-5 animate-in fade-in zoom-in-98 duration-300">
-      {/* 1. Observatory Banner */}
-      <section className="relative overflow-hidden rounded-none border border-amber-500/40 bg-gradient-to-br from-stone-950 via-slate-950 to-stone-900 p-5 sm:p-6 shadow-[0_0_24px_rgba(245,158,11,0.15)]">
-        <div className="absolute top-3 right-4 font-serif text-3xl text-amber-500/20 select-none pointer-events-none">
-          ᛟ ᚱ ᛇ
+    <div className="space-y-6">
+      {/* 1. Watcher Observatory Header Banner */}
+      <section className="relative overflow-hidden rounded-none border border-amber-500/30 bg-gradient-to-r from-amber-950/30 via-slate-900 to-slate-950 p-5 shadow-2xl">
+        <div className="absolute top-0 right-0 w-80 h-full bg-radial from-amber-500/10 to-transparent pointer-events-none" />
+        <div className="absolute top-3 right-4 font-mono text-[9px] text-amber-500/50 uppercase tracking-widest pointer-events-none">
+          STATION: ODIN_WATCHER // BUFFER_HEALTH: OPTIMAL
         </div>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
@@ -237,55 +177,7 @@ export function WatcherView() {
         </div>
 
         {/* Forensic Packet Inspector (1 Col) */}
-        <div className="rounded-none border border-slate-800 bg-slate-900/80 p-4 space-y-3 font-mono text-xs">
-          <div className="flex items-center gap-2 text-slate-300 border-b border-slate-800 pb-2">
-            <FileCode className="w-4 h-4 text-amber-400" />
-            <span className="font-semibold">RAW EVE JSON INSPECTOR</span>
-          </div>
-
-          {selectedEvent ? (
-            <div className="space-y-3">
-              <div className="p-2.5 rounded-none bg-slate-950 border border-slate-800 space-y-1">
-                <div className="text-[10px] text-slate-400">CATEGORY</div>
-                <div className="text-white font-semibold">{selectedEvent.category}</div>
-              </div>
-
-              <div className="p-2.5 rounded-none bg-slate-950 border border-slate-800 space-y-1">
-                <div className="text-[10px] text-slate-400">SIGNATURE</div>
-                <div className="text-amber-400 text-xs font-semibold leading-tight">
-                  {selectedEvent.signature}
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-none bg-slate-950 border border-slate-800 space-y-1">
-                <div className="text-[10px] text-slate-400">RAW PAYLOAD SUMMARY</div>
-                <pre className="text-[11px] text-slate-300 overflow-x-auto p-2 rounded-none bg-slate-900 border border-slate-800">
-{JSON.stringify(
-  {
-    event_type: 'alert',
-    src_ip: selectedEvent.srcIp.split(':')[0],
-    src_port: Number(selectedEvent.srcIp.split(':')[1]),
-    dest_ip: selectedEvent.destIp.split(':')[0],
-    dest_port: Number(selectedEvent.destIp.split(':')[1]),
-    proto: 'TCP',
-    alert: {
-      action: 'allowed',
-      gid: 1,
-      signature_id: 2012034,
-      rev: 8,
-      severity: selectedEvent.severity,
-    },
-  },
-  null,
-  2
-)}
-                </pre>
-              </div>
-            </div>
-          ) : (
-            <div className="text-slate-500 text-center py-10">Select an event from the stream to inspect</div>
-          )}
-        </div>
+        <WatcherInspector selectedEvent={selectedEvent} />
       </div>
     </div>
   );

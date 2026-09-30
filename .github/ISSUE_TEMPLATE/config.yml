@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Runawulf Security Policy"
+    url: "https://github.com/yohanvillarp/runawulf/blob/main/SECURITY.md"
+    about: "Read our security guidelines and threat model boundaries."
+  - name: "Canonical Architecture Guide"
+    url: "https://github.com/yohanvillarp/runawulf/blob/main/AGENTS.md"
+    about: "Review the 10 Immutable Security Invariants."

@@ -1,0 +1,28 @@
+# Runawulf — EditorConfig Configuration
+# Ensures consistent coding style across various editors and IDEs
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[Makefile]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
+
+[*.{json,yaml,yml}]
+indent_style = space
+indent_size = 2
+
+[*.{sh,bash}]
+indent_style = space
+indent_size = 2
+end_of_line = lf

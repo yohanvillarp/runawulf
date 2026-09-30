@@ -9,14 +9,21 @@
     "packages/*",
     "apps/*"
   ],
+  "type": "module",
   "scripts": {
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces",
-    "typecheck": "npm run typecheck --workspaces",
+    "prepare": "husky",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:lengths": "node scripts/check-file-lengths.js",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "clean": "npm run clean --workspaces --if-present"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "typescript": "^5.7.0"
   },
   "engines": {

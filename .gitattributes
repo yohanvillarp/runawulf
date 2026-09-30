@@ -1,0 +1,58 @@
+# Runawulf — Git Attributes Configuration
+# Preserves LF line endings across Linux and Windows environments
+
+# Auto-detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Linux scripts, build systems, and kernel sources (MUST ALWAYS be LF)
+*.sh text eol=lf
+*.bash text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.bpf.c text eol=lf
+Makefile text eol=lf
+
+# TypeScript, JavaScript, and Web assets
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+
+# Configuration and Documentation
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+
+# Linux systemd units and policies
+*.service text eol=lf
+*.socket text eol=lf
+*.target text eol=lf
+*.rwmod text eol=lf
+
+# Known binary files (DO NOT normalize or convert line endings)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.o binary
+*.so binary
+*.a binary
+*.bpf.o binary
+*.db binary
+*.db-wal binary
+*.db-shm binary
+*.tar.gz binary
+*.zip binary
