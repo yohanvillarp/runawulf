@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Runawulf — Ubuntu 22.04 LTS Vagrant / VM Provisioner
+# Runawulf — Ubuntu Server 24.04 LTS+ Vagrant / VM Provisioner
 # Prepares a clean Linux environment with eBPF CO-RE, nftables, and Node 20
 # ==============================================================================
 set -euo pipefail

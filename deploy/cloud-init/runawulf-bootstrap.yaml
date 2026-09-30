@@ -1,7 +1,7 @@
 #cloud-config
 # ==============================================================================
 # Runawulf — Cloud-Init Node Provisioning Blueprint
-# Target OS: Ubuntu 22.04 LTS (Jammy)
+# Target OS: Ubuntu Server 24.04 LTS+ (Noble)
 # ==============================================================================
 
 package_update: true
