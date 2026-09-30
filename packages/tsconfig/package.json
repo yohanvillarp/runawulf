@@ -1,0 +1,12 @@
+{
+  "name": "@runawulf/tsconfig",
+  "version": "2.0.0-alpha.1",
+  "description": "Shared TypeScript configurations for Runawulf workspaces",
+  "private": true,
+  "license": "MIT",
+  "files": [
+    "base.json",
+    "node.json",
+    "react.json"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@runawulf/daemon",
+  "version": "2.0.0-alpha.1",
+  "description": "Unprivileged web control plane and event-driven engine for Runawulf",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@runawulf/contracts": "*",
+    "fastify": "^5.2.0",
+    "@fastify/websocket": "^11.0.0",
+    "@fastify/cookie": "^11.0.0",
+    "@fastify/static": "^8.0.0",
+    "better-sqlite3": "^11.8.0",
+    "pino": "^9.6.0",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@runawulf/tsconfig": "*",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}

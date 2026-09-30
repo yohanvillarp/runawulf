@@ -1,0 +1,16 @@
+{
+  "name": "runawulf",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.7.0",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev:client": "pnpm --filter frontend dev",
+    "dev:server": "pnpm --filter backend dev",
+    "dev": "pnpm run dev:client & pnpm run dev:server",
+    "build": "pnpm --filter frontend build"
+  }
+}

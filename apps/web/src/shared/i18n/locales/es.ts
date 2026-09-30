@@ -1,0 +1,113 @@
+/**
+ * @file es.ts
+ * @description Spanish translations for Runawulf Control Plane.
+ */
+
+import type { TranslationDictionary } from '../types.js';
+
+export const es: TranslationDictionary = {
+  nav: {
+    dashboard: 'Panel Principal',
+    firewall: 'Firewall Algiz',
+    intrusion: 'IDS Eiwaz',
+    telemetry: 'Telemetría Raido',
+    audit: 'Libro de Auditoría',
+    settings: 'Configuración',
+    version: 'Runawulf v2.0.0-alpha',
+  },
+  header: {
+    statusConnected: 'Daemon Conectado',
+    postureLabel: 'Postura',
+    switchPosture: 'Cambiar Postura Operativa',
+    selectLanguage: 'Seleccionar Idioma',
+  },
+  modes: {
+    guardian: {
+      name: 'Guardian',
+      tagline: 'Autodefensa Activa',
+      description: 'Bucle autónomo: Suricata detecta amenazas y bloquea IPs al instante en sets dinámicos de nftables.',
+      themeLabel: 'Escarcha Ártica',
+    },
+    watcher: {
+      name: 'Watcher',
+      tagline: 'Centinela Pasivo y Forense',
+      description: 'Telemetría y detección activas. Alertas registradas en auditoría sin mutaciones automáticas de firewall.',
+      themeLabel: 'Ámbar de Odín',
+    },
+    lockdown: {
+      name: 'Lockdown',
+      tagline: 'Contención Perimetral',
+      description: 'Postura de emergencia: bloquea todo tráfico entrante no esencial preservando los canales de administración local.',
+      themeLabel: 'Carmesí de Fenrir',
+    },
+  },
+  views: {
+    guardian: {
+      title: 'Centro de Mando Táctico',
+      badge: 'ESCUDO ACTIVO AUTÓNOMO',
+      defenseNominal: 'Mitigaciones autónomas activas en table inet runawulf',
+      telemetryTitle: 'Telemetría del Host (Raido)',
+      cpuTitle: 'Uso de CPU',
+      memTitle: 'Asignación de Memoria',
+      ipcTitle: 'IPC Socket Helper',
+      loadTitle: 'Carga Promedio',
+      firewallOverview: 'Sets Dinámicos Algiz nftables',
+      activeSetsTitle: 'Sets Activos (IPv4 / IPv6)',
+      threatStatus: 'Flujo de Amenazas ET Ruleset Nominal',
+    },
+    watcher: {
+      title: 'Observatorio de Telemetría y Forense',
+      badge: 'TRANSMISIÓN PASIVA SURICATA EVE',
+      streamTitle: 'Flujo de Intrusión en Vivo y Telemetría de Red',
+      streamSubtitle: 'Inspeccionando metadatos de paquetes y firmas ET Open sin mutaciones automáticas.',
+      filterPlaceholder: 'Filtrar por IP de origen, firma o severidad...',
+      eventsCaptured: 'Eventos Capturados',
+      suricataVersion: 'Transmisión Suricata 7.0.2 EVE',
+      exportLogs: 'Exportar Registro de Auditoría',
+      tableTime: 'TIMESTAMP',
+      tableSeverity: 'SEV',
+      tableSource: 'ORIGEN -> DESTINO',
+      tableSignature: 'FIRMA / REGLA',
+      tableAction: 'DISPOSICIÓN',
+    },
+    lockdown: {
+      title: 'Consola de Contención de Emergencia',
+      badge: 'ALERTA MÁXIMA DE CRISIS',
+      alertMessage: 'Contención perimetral armada. Todo el tráfico entrante no autorizado es descartado a nivel de kernel en nftables.',
+      rollbackWatchdog: 'Temporizador Watchdog de Reversión en Root',
+      rollbackSecondsRemaining: 'Segundos para reversión automática si no se confirma:',
+      commitAction: 'Confirmar Bloqueo (Permanente)',
+      rollbackAction: 'Revertir a Guardian Ahora',
+      quarantineTitle: 'Matriz de Cuarentena',
+      portsIsolated: 'Puertos Protegidos: SSH (22), Daemon API (4000)',
+      emergencyDropAll: 'Set de Descarte Dinámico: Activo (28 bloqueados)',
+    },
+  },
+  onboarding: {
+    title: 'EL DESPERTAR RÚNICO',
+    subtitle: 'Verificación del Host e Inicialización del Plano de Control',
+    step1Title: 'Kernel e Interfaz de Red',
+    step1Desc: 'Enlazar la tabla declarativa nftables con la interfaz principal del host.',
+    step2Title: 'Sensor de Intrusión Eiwaz',
+    step2Desc: 'Verificar el seguidor de logs Suricata EVE y el conjunto de reglas ET Open.',
+    step3Title: 'Postura Defensiva Inicial',
+    step3Desc: 'Selecciona la postura operativa por defecto al arrancar el sistema.',
+    step4Title: 'Semilla Criptográfica del Auditor',
+    step4Desc: 'Generar y anclar la clave raíz HMAC-SHA256 para el libro de auditoría.',
+    btnNext: 'Siguiente Paso',
+    btnBack: 'Anterior',
+    btnArm: 'Despertar Runawulf',
+    interfaceDetected: 'Interfaces Detectadas',
+    evePathLabel: 'Ruta del Archivo de Logs Suricata EVE',
+    postureSelectLabel: 'Seleccionar Postura Inicial',
+    hmacKeyReady: 'Clave raíz HMAC-SHA256 generada en /etc/runawulf/audit.key',
+    completeNotice: 'Verificación del host completada. Armando plano de control...',
+  },
+  common: {
+    active: 'Activo',
+    cancel: 'Cancelar',
+    confirm: 'Confirmar',
+    systemNominal: 'Sistema Nominal',
+    live: 'EN VIVO',
+  },
+};

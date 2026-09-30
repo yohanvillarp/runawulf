@@ -1,0 +1,24 @@
+[Unit]
+Description=Runawulf Unprivileged Web Control Plane
+After=network.target runawulf-helper.socket
+Wants=runawulf-helper.socket
+
+[Service]
+Type=simple
+User=runawulf
+Group=runawulf
+ExecStart=/usr/local/bin/node /usr/local/bin/runawulfd
+WorkingDirectory=/var/lib/runawulf
+Restart=always
+RestartSec=5s
+Environment=NODE_ENV=production
+
+# Hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/runawulf
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

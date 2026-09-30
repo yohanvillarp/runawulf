@@ -1,0 +1,26 @@
+# ==============================================================================
+# Runawulf Privileged Helper Policy Template
+# Path: /etc/runawulf/privileged-policy.yaml
+# Ownership: root:root (0644)
+# ==============================================================================
+
+version: "2.0"
+
+systemd:
+  allowedUnits:
+    - "nginx.service"
+    - "suricata.service"
+
+firewall:
+  managedTable: "table inet runawulf"
+  maxDynamicBlockDurationSeconds: 604800 # 7 days
+  protectedCidrs:
+    - "127.0.0.1/32"
+    - "192.168.1.0/24"
+  protectedPorts:
+    - 22   # SSH
+    - 4000 # Runawulf Web
+
+audit:
+  keyPath: "/etc/runawulf/audit.key"
+  anchorIntervalEvents: 100

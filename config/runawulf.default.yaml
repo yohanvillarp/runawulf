@@ -1,0 +1,22 @@
+# ==============================================================================
+# Runawulf Daemon Configuration Template
+# Path: /etc/runawulf/config.yaml
+# ==============================================================================
+
+server:
+  host: "0.0.0.0"
+  port: 4000
+  tls:
+    enabled: false
+    certFile: ""
+    keyFile: ""
+
+paths:
+  stateDatabase: "/var/lib/runawulf/state.db"
+  auditDatabase: "/var/lib/runawulf/audit.db"
+  helperSocket: "/run/runawulf/helper.sock"
+  staticWebDir: "/usr/share/runawulf/web"
+  suricataEveJson: "/var/log/suricata/eve.json"
+
+logging:
+  level: "info"

@@ -1,0 +1,22 @@
+{
+  "name": "@runawulf/cli",
+  "version": "2.0.0-alpha.1",
+  "description": "Operational CLI utility for Runawulf system administration (runawulfctl)",
+  "private": true,
+  "license": "MIT",
+  "bin": {
+    "runawulfctl": "./dist/main.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@runawulf/contracts": "*"
+  },
+  "devDependencies": {
+    "@runawulf/tsconfig": "*",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
