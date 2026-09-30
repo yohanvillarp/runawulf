@@ -3,7 +3,7 @@ CLANG ?= clang
 ARCH ?= $(shell uname -m | sed 's/x86_64/x86/' | sed 's/aarch64/arm64/')
 
 BPF_CFLAGS ?= -g -O2 -target bpf -D__TARGET_ARCH_$(ARCH) \
-              -Iinclude -I/usr/include/$(shell uname -m)-linux-gnu \
+              -Iinclude -I/usr/include -I/usr/include/$(shell uname -m)-linux-gnu \
               -Wall -Werror
 
 SRC_DIR := src
