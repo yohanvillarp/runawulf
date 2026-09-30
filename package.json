@@ -9,14 +9,21 @@
     "packages/*",
     "apps/*"
   ],
+  "type": "module",
   "scripts": {
+    "prepare": "husky",
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
+    "lint:lengths": "node scripts/check-file-lengths.js",
     "typecheck": "npm run typecheck --workspaces",
     "clean": "npm run clean --workspaces --if-present"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "typescript": "^5.7.0"
   },
   "engines": {
