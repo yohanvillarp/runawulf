@@ -83,11 +83,21 @@ cd runawulf
 # Instalar dependencias e inicializar los hooks de Husky
 npm install
 
-# Verificar puertas de calidad y límites de líneas
+# Verificar límites de longitud de archivos y sintaxis YAML
 npm run lint:lengths
+npm run lint:yaml
 
 # Comprobar tipos en todo el monorepo
 npm run typecheck
+
+# Compilar todos los paquetes y la interfaz web
+make build   # o npm run build
+
+# Desarrollo multiplataforma con el simulador (Windows / macOS)
+npm run dev:mock
+
+# Sandbox completo del Kernel Linux (eBPF y nftables)
+vagrant up   # o bash test/multipass/launch.sh
 
 # Ejecutar suite de pruebas
 npm test
