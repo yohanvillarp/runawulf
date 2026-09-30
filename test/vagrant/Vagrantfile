@@ -1,12 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 # ==============================================================================
-# Runawulf — Vagrantfile for Ubuntu 22.04 LTS Kernel & eBPF Sandboxing
+# Runawulf — Vagrantfile for Ubuntu Server 24.04 LTS+ Kernel & eBPF Sandboxing
 # ==============================================================================
 
 Vagrant.configure("2") do |config|
-  # Canonical Ubuntu 22.04 LTS (Jammy Jellyfish) with Kernel 5.15+
-  config.vm.box = "generic/ubuntu2204"
+  # Canonical Ubuntu Server 24.04 LTS+ (Noble Numbat) with Kernel 6.8+
+  config.vm.box = "generic/ubuntu2404"
   config.vm.box_check_update = false
 
   # Network Configuration

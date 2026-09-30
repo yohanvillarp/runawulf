@@ -4,8 +4,8 @@
 
 [![Runawulf CI Pipeline](https://github.com/yohanvillarp/runawulf/actions/workflows/ci.yml/badge.svg)](https://github.com/yohanvillarp/runawulf/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Target OS](https://img.shields.io/badge/Target_OS-Ubuntu_22.04_LTS+-orange.svg)](https://ubuntu.com/)
-[![Kernel](https://img.shields.io/badge/Kernel-5.15+_eBPF_CO--RE-purple.svg)](https://ebpf.io/)
+[![Target OS](https://img.shields.io/badge/Target_OS-Ubuntu_Server_24.04_LTS+-orange.svg)](https://ubuntu.com/)
+[![Kernel](https://img.shields.io/badge/Kernel-6.8+_eBPF_CO--RE-purple.svg)](https://ebpf.io/)
 
 ---
 
@@ -98,7 +98,7 @@ runawulf/
 ## 5. Developer Quickstart
 
 ### Prerequisites
-* **Linux (Production / e2e):** Ubuntu 22.04 LTS+, Kernel 5.15+, `clang-14`, `llvm-14`, `libbpf-dev`, `nftables`.
+* **Linux (Production / e2e):** Ubuntu Server 24.04 LTS+, Kernel 6.8+, `clang-18`, `llvm-18`, `libbpf-dev`, `nftables`.
 * **Cross-Platform (Dev):** Windows, macOS, or Linux with Node.js `>= 20.0.0` and `npm >= 9.0.0`.
 
 ### Common Commands (Makefile)
@@ -128,7 +128,7 @@ npm run dev:mock
 ```
 
 ### Full Kernel Sandbox (Vagrant & Multipass)
-To test live eBPF probes and `nftables` in an isolated Ubuntu 22.04 LTS virtual machine:
+To test live eBPF probes and `nftables` in an isolated Ubuntu Server 24.04 LTS+ virtual machine:
 ```bash
 # Option A: Vagrant (VirtualBox / Libvirt)
 vagrant up

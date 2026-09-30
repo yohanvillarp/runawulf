@@ -72,7 +72,7 @@ Los commits deben ser **atómicos y modulares** (un solo cambio lógico por comm
 ### Requisitos Previos
 * Node.js $\ge$ 20.0.0
 * npm $\ge$ 9.0.0
-* Linux (recomendado Ubuntu 22.04 LTS) o Windows 11 con PowerShell 7+
+* Linux (recomendado Ubuntu Server 24.04 LTS+) o Windows 11 con PowerShell 7+
 
 ### Pasos Iniciales
 ```bash

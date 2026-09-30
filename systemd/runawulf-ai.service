@@ -13,7 +13,7 @@ ExecStart=/usr/bin/node apps/ai/dist/index.js
 Restart=on-failure
 RestartSec=5s
 
-# Systemd Credential Exposure (Ubuntu 22.04 LTS systemd 249 compatible)
+# Systemd Credential Exposure (Ubuntu Server 24.04 LTS+ systemd 255+ compatible)
 LoadCredential=ai-token:/etc/runawulf/credentials/ai.key
 
 # Sandboxing & Resource Isolation (Invariants I1, I10)

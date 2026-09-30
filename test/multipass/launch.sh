@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Runawulf — Multipass MicroVM Sandbox Launcher
-# Launches a lightweight Ubuntu 22.04 LTS instance and mounts the workspace
+# Launches a lightweight Ubuntu Server 24.04 LTS+ instance and mounts the workspace
 # ==============================================================================
 set -euo pipefail
 
@@ -19,8 +19,8 @@ echo "==> Checking if instance '$VM_NAME' already exists..."
 if multipass list | grep -q "$VM_NAME"; then
   echo "==> Instance '$VM_NAME' is already running."
 else
-  echo "==> Launching Ubuntu 22.04 LTS microVM '$VM_NAME'..."
-  multipass launch 22.04 \
+  echo "==> Launching Ubuntu Server 24.04 LTS+ microVM '$VM_NAME'..."
+  multipass launch 24.04 \
     --name "$VM_NAME" \
     --cpus "$CPUS" \
     --memory "$MEM" \
