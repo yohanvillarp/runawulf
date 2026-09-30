@@ -1,16 +1,26 @@
 {
   "name": "runawulf",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.1",
+  "description": "A lightweight, event-driven local control plane for Linux security, telemetry, and automated operations.",
   "private": true,
-  "packageManager": "pnpm@10.7.0",
+  "license": "MIT",
+  "author": "Runawulf Core Team",
   "workspaces": [
-    "client",
-    "server"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
-    "dev:client": "pnpm --filter frontend dev",
-    "dev:server": "pnpm --filter backend dev",
-    "dev": "pnpm run dev:client & pnpm run dev:server",
-    "build": "pnpm --filter frontend build"
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "clean": "npm run clean --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
   }
 }
