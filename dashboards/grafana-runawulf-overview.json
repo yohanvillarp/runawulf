@@ -1,0 +1,104 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "🐺 Kernel Sensor & eBPF Telemetry",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "pps"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+      "id": 2,
+      "title": "XDP / eBPF Packets Ingested vs Dropped",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "rate(runawulf_sensor_packets_total[1m])", "legendFormat": "Ingested Packets" },
+        { "expr": "rate(runawulf_sensor_packets_dropped_total[1m])", "legendFormat": "Dropped Packets" }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+      "id": 3,
+      "title": "RingBuffer Drops (TelemetryDegraded)",
+      "type": "stat",
+      "targets": [
+        { "expr": "runawulf_sensor_ringbuf_drops_total", "legendFormat": "RingBuf Overflow Drops" }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "id": 4,
+      "title": "🛡️ Declarative Firewall (nftables) & Audit Ledger",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 10 },
+      "id": 5,
+      "title": "Active Rules in table inet runawulf",
+      "type": "stat",
+      "targets": [
+        { "expr": "runawulf_firewall_active_rules", "legendFormat": "Active Rules" }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "ms" }
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 10 },
+      "id": 6,
+      "title": "Cognitive AI Assessment Latency",
+      "type": "timeseries",
+      "targets": [
+        { "expr": "runawulf_cognitive_latency_seconds * 1000", "legendFormat": "Advisory Latency (ms)" }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["runawulf", "security", "ebpf", "nftables", "linux"],
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m"] },
+  "timezone": "browser",
+  "title": "Runawulf — Fleet & Node Control Plane Overview",
+  "uid": "runawulf-overview",
+  "version": 1
+}

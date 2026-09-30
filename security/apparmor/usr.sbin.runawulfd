@@ -1,0 +1,40 @@
+# ==============================================================================
+# Runawulf — AppArmor Security Profile for Unprivileged Web Gateway
+# Target Binary: runawulfd (Node.js fastify process)
+# Invariant I10: Privilege Escalation Containment
+# ==============================================================================
+#include <tunables/global>
+
+/usr/bin/runawulfd {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/node>
+
+  # Allow reading node runtime and dependencies
+  /usr/bin/node mr,
+  /usr/lib/runawulf/** r,
+  /usr/lib/runawulf/apps/daemon/** mr,
+
+  # Configuration read-only access
+  /etc/runawulf/runawulf.yaml r,
+  /etc/runawulf/privileged-policy.yaml r,
+
+  # State directory: read & write for local sqlite databases
+  /var/lib/runawulf/** rw,
+  /var/lib/runawulf/state.db* rwk,
+
+  # Deny all access to root-only audit key (Invariant I6)
+  deny /etc/runawulf/audit.key rwklx,
+
+  # Deny access to sensitive host secrets
+  deny /etc/shadow* rwklx,
+  deny /etc/gshadow* rwklx,
+  deny /root/** rwklx,
+
+  # Unix Domain Socket communication with helper
+  /run/runawulf/helper.sock rw,
+
+  # Networking: bound to control plane port (TCP 4000)
+  network inet stream,
+  network inet6 stream,
+}
