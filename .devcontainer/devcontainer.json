@@ -1,0 +1,32 @@
+{
+  "name": "Runawulf Linux & eBPF DevContainer",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "runArgs": [
+    "--cap-add=SYS_ADMIN",
+    "--cap-add=NET_ADMIN",
+    "--cap-add=BPF",
+    "--security-opt",
+    "seccomp=unconfined"
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "files.eol": "\n"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-vscode.makefile-tools",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  },
+  "forwardPorts": [4000, 5173, 9090],
+  "postCreateCommand": "npm install"
+}
