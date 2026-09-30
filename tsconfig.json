@@ -5,6 +5,8 @@
     { "path": "apps/daemon" },
     { "path": "apps/helper" },
     { "path": "apps/cli" },
-    { "path": "apps/web" }
+    { "path": "apps/web" },
+    { "path": "apps/ai" },
+    { "path": "apps/sensor" }
   ]
 }
