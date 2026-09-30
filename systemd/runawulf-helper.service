@@ -1,0 +1,26 @@
+[Unit]
+Description=Runawulf Privileged Worker Service
+Requires=runawulf-helper.socket
+After=runawulf-helper.socket
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/node /usr/local/bin/runawulf-helper
+StandardInput=socket
+Restart=on-failure
+RestartSec=3s
+
+# Privileged Hardening
+NoNewPrivileges=yes
+CapabilityBoundingSet=CAP_NET_ADMIN
+AmbientCapabilities=CAP_NET_ADMIN
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/runawulf
+PrivateTmp=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target
