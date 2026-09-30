@@ -1,18 +1,18 @@
 /**
  * @file WatchdogRollback.ts
- * @description Autonomous rollback state machine residing in root space.
- * Automatically reverts candidate firewall changes if unconfirmed within the watchdog timeout.
+ * @description Autonomous 30-second rollback watchdog for atomic nftables mutations (Invariant I5).
+ * Resides strictly within root space in runawulf-helper.
  */
 
 import type { NftClient } from './NftClient.js';
 
-export interface PendingTransaction {
+interface PendingTransaction {
   transactionId: string;
   backupRuleset: string;
   timer: NodeJS.Timeout;
 }
 
-export class WatchdogRollbackManager {
+export class WatchdogRollback {
   private activeTransaction: PendingTransaction | null = null;
 
   constructor(private readonly nftClient: NftClient) {}
@@ -44,8 +44,8 @@ export class WatchdogRollbackManager {
       timer,
     };
 
-    // 3. Apply candidate ruleset
-    await this.nftClient.execute(['-f', '-'], /* with candidate input */);
+    // 3. Apply candidate ruleset safely via stdin
+    await this.nftClient.executeWithInput(['-f', '-'], candidateRulesetJson);
   }
 
   /**
@@ -72,7 +72,7 @@ export class WatchdogRollbackManager {
     const backup = this.activeTransaction.backupRuleset;
     this.activeTransaction = null;
 
-    // Restore backup snapshot
-    await this.nftClient.execute(['-f', '-'], /* with backup */);
+    // Restore backup snapshot safely via stdin
+    await this.nftClient.executeWithInput(['-f', '-'], backup);
   }
 }
